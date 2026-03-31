@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, ChevronRight } from 'lucide-react';
 import { GithubIcon } from '@/lib/social-icons';
 import { type Project } from '@/lib/data';
 
@@ -165,7 +165,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
               <ul className="space-y-2">
                 {cs.processHighlights.map((highlight, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm" style={{ color: 'var(--brutal-text-muted)' }}>
-                    <span style={{ color: 'var(--brutal-yellow)' }}>&#9656;</span>
+                    <ChevronRight size={14} style={{ color: 'var(--brutal-yellow)', flexShrink: 0, marginTop: 2 }} />
                     {highlight}
                   </li>
                 ))}

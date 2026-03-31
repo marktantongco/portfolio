@@ -256,7 +256,7 @@ function ScaffoldDemo() {
 
 // ─── SENTIENT: Design Token System ───
 function SentientDemo() {
-  const [color, setColor] = useState('#FFEA00');
+  const [color, setColor] = useState('var(--brutal-yellow)');
   const [spacing, setSpacing] = useState('8');
   const [fontSize, setFontSize] = useState('16');
   const [borderWidth, setBorderWidth] = useState('2');
