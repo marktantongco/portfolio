@@ -1,0 +1,12 @@
+{
+  "name": "Mark Anthony Tantongco — Portfolio",
+  "short_name": "MT Portfolio",
+  "description": "AI Creative Strategist Portfolio",
+  "start_url": "/portfolio/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#FFEA00",
+  "icons": [
+    { "src": "/portfolio/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

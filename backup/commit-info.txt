@@ -1,0 +1,3 @@
+f5c6fc9d2b53da57579d4011be5061b2f20a8543 fix: resolve validation failures — hex colors, skip link, validate.sh
+Build: 2026-03-31 22:34 UTC
+Commit: f5c6fc9
