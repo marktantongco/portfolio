@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM — 12 CSS Custom Properties
+   ═══════════════════════════════════════════════════════ */
+:root {
+  --brutal-yellow:  #FFEA00;
+  --brutal-lime:    #ccff00;
+  --brutal-cyan:    #00ffff;
+  --brutal-magenta: #FF0080;
+  --brutal-gold:    #FFD700;
+  --brutal-orange:  #FF6B00;
+  --brutal-red:     #FF0033;
+  --brutal-green:   #00FF66;
+  --brutal-void:    #0a0a0a;
+  --brutal-surface: #111111;
+  --brutal-border:  #FFFFFF;
+  --brutal-text-muted: #666666;
+
+  /* Brutalist tokens */
+  --border-thin:    2px solid var(--brutal-border);
+  --border-thick:   4px solid var(--brutal-border);
+  --shadow-brutal:  6px 6px 0px var(--brutal-yellow);
+  --shadow-brutal-lg: 8px 8px 0px var(--brutal-yellow);
+  --shadow-hover:   10px 10px 0px var(--brutal-yellow);
+  --radius:         0px;
+  --transition:     150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --easing-bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ═══════════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════════ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--brutal-void);
+  color: var(--brutal-border);
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Focus visible */
+*:focus-visible {
+  outline: 2px solid var(--brutal-yellow);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--brutal-yellow);
+  color: var(--brutal-void);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--brutal-void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--brutal-border);
+  border: 1px solid var(--brutal-void);
+}
+
+/* ═══════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════════════ */
+.display-h1 {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.section-h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.subheading-h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+}
+
+.heading-h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.label-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.mono-text {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BRUTALIST UTILITIES
+   ═══════════════════════════════════════════════════════ */
+.brutal-card {
+  background: var(--brutal-surface);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-brutal);
+}
+
+.brutal-card-hover:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+}
+
+.brutal-input {
+  background: var(--brutal-surface);
+  border: var(--border-thin);
+  color: var(--brutal-border);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.brutal-input:focus {
+  border-color: var(--brutal-yellow);
+  outline: none;
+}
+
+.brutal-input::placeholder {
+  color: var(--brutal-text-muted);
+}
+
+.brutal-btn {
+  background: var(--brutal-yellow);
+  color: var(--brutal-void);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1.5rem;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-brutal);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.75rem;
+}
+
+.brutal-btn:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes bracket-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes float-rotate {
+  0% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-20px) rotate(90deg); }
+  50% { transform: translateY(0) rotate(180deg); }
+  75% { transform: translateY(20px) rotate(270deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-200px) rotate(720deg); opacity: 0; }
+}
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes scan-line {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
