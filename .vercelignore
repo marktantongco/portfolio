@@ -1,0 +1,8 @@
+node_modules
+.git
+backup
+*.md
+.gitignore
+eslint.config.js
+validate.sh
+tsconfig*.json
