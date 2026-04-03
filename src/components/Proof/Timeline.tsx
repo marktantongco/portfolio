@@ -1,49 +1,74 @@
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from '@/lib/gsap-setup';
 import { timeline } from '@/lib/data';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: -30 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
-};
-
 export default function Timeline() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Vertical connecting line grows on scroll
+    gsap.fromTo('.timeline-line',
+      { scaleY: 0, transformOrigin: 'top center' },
+      {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 70%',
+          end: 'bottom 40%',
+          scrub: 1,
+        },
+      }
+    );
+
+    // Timeline entries fade in one at a time on scroll
+    gsap.utils.toArray<HTMLElement>('.timeline-entry').forEach((entry) => {
+      gsap.from(entry, {
+        x: -40,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: entry,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    });
+
+    // Active timeline dots pulse
+    gsap.utils.toArray<HTMLElement>('.timeline-dot-active').forEach((dot) => {
+      gsap.to(dot, {
+        scale: 1.3,
+        opacity: 0.6,
+        duration: 2,
+        ease: 'power1.inOut',
+        yoyo: true,
+        repeat: -1,
+      });
+    });
+  }, { scope: sectionRef });
+
   return (
-    <div className="relative pl-8 md:pl-12">
+    <div ref={sectionRef} className="relative pl-8 md:pl-12">
       {/* Vertical connecting line */}
       <div
-        className="absolute left-3 md:left-5 top-0 bottom-0 w-0.5"
+        className="timeline-line absolute left-3 md:left-5 top-0 bottom-0 w-0.5"
         style={{ background: 'var(--brutal-border)', opacity: 0.3 }}
         aria-hidden="true"
       />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
-        className="space-y-6"
-      >
+      <div className="space-y-6">
         {timeline.map((entry) => (
-          <motion.div
-            key={entry.year}
-            variants={itemVariants}
-            className="relative"
-            whileHover={{ boxShadow: 'var(--shadow-brutal)' }}
-          >
+          <div key={entry.year} className="timeline-entry relative">
             {/* Dot on timeline */}
-            <motion.div
-              className="absolute -left-5 md:-left-7 top-4 w-4 h-4"
+            <div
+              className={`absolute -left-5 md:-left-7 top-4 w-4 h-4 ${entry.isActive ? 'timeline-dot-active' : ''}`}
               style={{
                 background: entry.isActive ? 'var(--brutal-yellow)' : 'var(--brutal-surface)',
                 border: entry.isActive ? '2px solid var(--brutal-yellow)' : '2px solid var(--brutal-border)',
               }}
-              animate={entry.isActive ? { scale: [1, 1.3, 1], opacity: [1, 0.6, 1] } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
             />
 
             {/* Card */}
@@ -72,9 +97,9 @@ export default function Timeline() {
                 {entry.description}
               </p>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }

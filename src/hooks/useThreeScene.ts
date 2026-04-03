@@ -133,7 +133,7 @@ export function useThreeScene(canvasRef: React.RefObject<HTMLCanvasElement | nul
     window.addEventListener('mousemove', handleMouseMove);
 
     // Animation loop
-    let animationId: number;
+    let animationId = 0;
     const clock = new THREE.Clock();
 
     const animate = () => {

@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useGSAP } from '@gsap/react';
+import { gsap } from '@/lib/gsap-setup';
 import { Search, Compass, Zap, RefreshCw } from 'lucide-react';
 import { processSteps } from '@/lib/data';
 
@@ -7,18 +8,82 @@ const iconMap: Record<string, React.FC<{ size?: number; className?: string }>> =
   Search, Compass, Zap, RefreshCw,
 };
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: -30 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
-};
-
 export default function Process() {
   const sectionRef = useRef<HTMLElement>(null);
+
+  useGSAP(() => {
+    // Header animations
+    gsap.from('.process-header-h2', {
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.process-header-h2',
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    gsap.from('.process-header-p', {
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power3.out',
+      delay: 0.2,
+      scrollTrigger: {
+        trigger: '.process-header-p',
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // Each step card slides in from alternating left/right
+    gsap.utils.toArray<HTMLElement>('.process-step').forEach((step, i) => {
+      gsap.from(step, {
+        x: i % 2 === 0 ? -60 : 60,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: step,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+
+      // Step number scales up on entry
+      const numEl = step.querySelector('.process-step-num');
+      if (numEl) {
+        gsap.from(numEl, {
+          scale: 0,
+          duration: 0.6,
+          ease: 'back.out(1.4)',
+          scrollTrigger: {
+            trigger: step,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+          },
+        });
+      }
+
+      // Accent bar expands from 0 width on scroll
+      const barEl = step.querySelector('.process-accent-bar');
+      if (barEl) {
+        gsap.from(barEl, {
+          scaleX: 0,
+          transformOrigin: 'left center',
+          duration: 0.8,
+          delay: 0.1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: step,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        });
+      }
+    });
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -28,68 +93,50 @@ export default function Process() {
       style={{
         backgroundImage: 'radial-gradient(circle at 1px 1px, var(--brutal-text-muted) 1px, transparent 1px)',
         backgroundSize: '20px 20px',
-        backgroundOpacity: 0.05,
       }}
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <motion.h2
-            className="section-h2 mb-4"
+          <h2
+            className="process-header-h2 section-h2 mb-4"
             style={{ color: 'var(--brutal-border)' }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
           >
             THE SCAFFOLD METHOD
-          </motion.h2>
-          <motion.p
-            className="label-text"
+          </h2>
+          <p
+            className="process-header-p label-text"
             style={{ color: 'var(--brutal-text-muted)' }}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
           >
             A physics-first approach to creative problem-solving.
-          </motion.p>
+          </p>
         </div>
 
         {/* Steps */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {processSteps.map((step, i) => {
             const Icon = iconMap[step.icon] || Search;
             return (
-              <motion.div
+              <div
                 key={step.name}
-                variants={itemVariants}
-                className="relative p-6"
+                className="process-step relative p-6"
                 style={{
                   background: 'var(--brutal-surface)',
                   border: 'var(--border-thick)',
                   boxShadow: 'var(--shadow-brutal)',
-                }}
+                  '--process-accent': step.accent,
+                } as React.CSSProperties}
               >
                 {/* Accent bar */}
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-1"
-                  style={{ background: step.accent }}
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: i * 0.15 }}
+                <div
+                  className="process-accent-bar absolute top-0 left-0 w-full h-1"
+                  style={{ background: step.accent, transformOrigin: 'left center' }}
                 />
 
                 {/* Step number + diamond indicator */}
                 <div className="flex items-center gap-3 mb-4">
                   <div
-                    className="w-4 h-4 flex-shrink-0"
+                    className="process-step-num w-4 h-4 flex-shrink-0"
                     style={{
                       background: step.accent,
                       transform: 'rotate(45deg)',
@@ -102,7 +149,7 @@ export default function Process() {
 
                 {/* Icon */}
                 <div className="mb-4">
-                  <Icon size={28} style={{ color: step.accent }} />
+                  <Icon size={28} className="[color:var(--process-accent)]" />
                 </div>
 
                 {/* Title */}
@@ -123,10 +170,10 @@ export default function Process() {
                     aria-hidden="true"
                   />
                 )}
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

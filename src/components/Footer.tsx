@@ -1,4 +1,6 @@
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from '@/lib/gsap-setup';
 import { Mail } from 'lucide-react';
 import { GithubIcon, TwitterIcon, LinkedinIcon, InstagramIcon } from '@/lib/social-icons';
 import { socialLinks } from '@/lib/data';
@@ -12,7 +14,22 @@ const iconMap: Record<string, React.FC<{ size?: number; className?: string }>> =
 };
 
 export default function Footer() {
+  const statusRef = useRef<HTMLSpanElement>(null);
   const year = new Date().getFullYear();
+
+  useGSAP(() => {
+    // GSAP status pulse
+    if (statusRef.current) {
+      gsap.to(statusRef.current, {
+        opacity: 0.4,
+        scale: 1.3,
+        duration: 1.5,
+        ease: 'power1.inOut',
+        yoyo: true,
+        repeat: -1,
+      });
+    }
+  }, []);
 
   return (
     <footer className="py-12 px-6" style={{ borderTop: 'var(--border-thick)' }}>
@@ -24,16 +41,15 @@ export default function Footer() {
 
         {/* Built with */}
         <p className="text-xs" style={{ color: 'var(--brutal-text-muted)' }}>
-          Built with React, Three.js, Framer Motion, TypeScript
+          Built with React, Three.js, GSAP, TypeScript
         </p>
 
         {/* Status */}
         <div className="flex items-center gap-2">
-          <motion.span
+          <span
+            ref={statusRef}
             className="inline-block w-2 h-2"
             style={{ background: 'var(--brutal-green)', borderRadius: '50%' }}
-            animate={{ opacity: [1, 0.4, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
           />
           <span className="label-text" style={{ color: 'var(--brutal-green)' }}>
             AVAILABLE FOR PROJECTS

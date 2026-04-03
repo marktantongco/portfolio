@@ -217,6 +217,66 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════
+   GSAP-SPECIFIC UTILITIES
+   ═══════════════════════════════════════════════════════ */
+
+/* Interactive press feedback for buttons */
+.interactive-press {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.interactive-press:active {
+  transform: scale(0.97);
+}
+
+/* Clip-path reveal base (GSAP animates from/to) */
+.gsap-clip-reveal {
+  clip-path: inset(0 100% 0 0);
+}
+
+/* Will-change hints for GSAP animated elements */
+.gsap-will-transform {
+  will-change: transform, opacity;
+}
+
+.gsap-will-clip {
+  will-change: clip-path, opacity;
+}
+
+/* Shimmer skeleton for tab content switches */
+.gsap-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--brutal-surface);
+}
+
+.gsap-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 234, 0, 0.04) 50%,
+    transparent 100%
+  );
+  animation: shimmer-sweep 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Content visibility optimization for sections below fold */
+.section-below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* ═══════════════════════════════════════════════════════
    REDUCED MOTION
    ═══════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {

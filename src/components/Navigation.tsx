@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap, ScrollTrigger } from '@/lib/gsap-setup';
 import { Menu, X } from 'lucide-react';
 import { navigationItems, type SectionId } from '@/lib/data';
 
@@ -11,16 +12,73 @@ interface NavigationProps {
 export default function Navigation({ activeSection, scrollToSection }: NavigationProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const { scrollY } = useScroll();
+  const lastScrollY = useRef(0);
+  const navRef = useRef<HTMLElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileLinksRef = useRef<HTMLDivElement>(null);
 
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    const prev = scrollY.getPrevious() ?? 0;
-    if (latest > prev && latest > 100) {
-      setHidden(true);
-    } else {
-      setHidden(false);
+  // GSAP auto-hide with ScrollTrigger
+  useGSAP(() => {
+    ScrollTrigger.create({
+      start: 'top top',
+      end: 'max',
+      onUpdate: (self) => {
+        const scrollY = self.scroll();
+        if (scrollY > lastScrollY.current && scrollY > 100) {
+          if (!hidden) {
+            setHidden(true);
+            gsap.to(navRef.current, {
+              y: -64,
+              duration: 0.3,
+              ease: 'power2.inOut',
+            });
+          }
+        } else {
+          if (hidden) {
+            setHidden(false);
+            gsap.to(navRef.current, {
+              y: 0,
+              duration: 0.3,
+              ease: 'power2.inOut',
+            });
+          }
+        }
+        lastScrollY.current = scrollY;
+      },
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => {
+        if (t.trigger === undefined) t.kill();
+      });
+    };
+  }, { scope: navRef });
+
+  // GSAP mobile menu slide
+  useEffect(() => {
+    if (mobileOpen && mobileMenuRef.current && mobileLinksRef.current) {
+      gsap.set(mobileMenuRef.current, { display: 'flex' });
+      gsap.fromTo(mobileMenuRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
+      gsap.fromTo(mobileLinksRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', stagger: 0.06 }
+      );
+    } else if (mobileMenuRef.current) {
+      gsap.to(mobileMenuRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => {
+          if (mobileMenuRef.current) {
+            gsap.set(mobileMenuRef.current, { display: 'none' });
+          }
+        },
+      });
     }
-  });
+  }, [mobileOpen]);
 
   const handleNav = (id: SectionId) => {
     scrollToSection(id);
@@ -29,6 +87,7 @@ export default function Navigation({ activeSection, scrollToSection }: Navigatio
 
   return (
     <header
+      ref={navRef}
       className="fixed top-0 left-0 right-0"
       style={{
         zIndex: 50,
@@ -68,10 +127,10 @@ export default function Navigation({ activeSection, scrollToSection }: Navigatio
         <div className="flex items-center gap-4">
           <button
             onClick={() => handleNav('contact')}
-            className="hidden sm:block brutal-btn text-xs px-4 py-2"
+            className="hidden sm:block brutal-btn text-xs px-4 py-2 min-h-[44px] interactive-press"
             aria-label="Go to contact section"
           >
-            LET'S TALK
+            LET&apos;S TALK
           </button>
           <button
             className="md:hidden p-2"
@@ -85,43 +144,30 @@ export default function Navigation({ activeSection, scrollToSection }: Navigatio
       </nav>
 
       {/* Mobile menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: '100vh' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden fixed inset-0 top-16 flex flex-col items-center justify-center gap-8"
-            style={{ background: 'var(--brutal-void)' }}
-          >
-            {navigationItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNav(item.id)}
-                className="section-h2"
-                style={{ color: activeSection === item.id ? 'var(--brutal-yellow)' : 'var(--brutal-border)' }}
-              >
-                {item.label}
-              </button>
-            ))}
+      <div
+        ref={mobileMenuRef}
+        className="md:hidden fixed inset-0 top-16 flex flex-col items-center justify-center"
+        style={{ background: 'var(--brutal-void)', display: 'none' }}
+      >
+        <div ref={mobileLinksRef} className="flex flex-col items-center gap-8">
+          {navigationItems.map((item) => (
             <button
-              onClick={() => handleNav('contact')}
-              className="brutal-btn text-sm px-6 py-3 mt-4"
+              key={item.id}
+              onClick={() => handleNav(item.id)}
+              className="section-h2"
+              style={{ color: activeSection === item.id ? 'var(--brutal-yellow)' : 'var(--brutal-border)' }}
             >
-              LET'S TALK
+              {item.label}
             </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Auto-hide animation */}
-      <motion.div
-        animate={{ y: hidden ? -64 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(12px)', borderBottom: 'var(--border-thin)' }}
-        aria-hidden="true"
-      />
+          ))}
+          <button
+            onClick={() => handleNav('contact')}
+            className="brutal-btn text-sm px-6 py-3 mt-4 min-h-[44px] interactive-press"
+          >
+            LET&apos;S TALK
+          </button>
+        </div>
+      </div>
     </header>
   );
 }

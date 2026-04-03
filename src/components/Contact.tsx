@@ -1,6 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail } from 'lucide-react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from '@/lib/gsap-setup';
 import { GithubIcon, TwitterIcon, LinkedinIcon, InstagramIcon } from '@/lib/social-icons';
 import { toast } from 'sonner';
 import { socialLinks } from '@/lib/data';
@@ -18,7 +20,7 @@ export default function Contact() {
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [success, setSuccess] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
-  const formRef = useRef<HTMLFormElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   const validate = () => {
     const newErrors: Record<string, boolean> = {};
@@ -54,37 +56,124 @@ export default function Contact() {
     setNewsletterEmail('');
   };
 
+  useGSAP(() => {
+    // Header scroll animation
+    gsap.from('.contact-header', {
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.contact-header',
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // Form fields stagger in from left on scroll
+    gsap.utils.toArray<HTMLElement>('.contact-field').forEach((field, i) => {
+      gsap.from(field, {
+        x: -40,
+        opacity: 0,
+        duration: 0.6,
+        delay: i * 0.08,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: field,
+          start: 'top 90%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    });
+
+    // Newsletter section slides up on scroll
+    gsap.from('.contact-newsletter', {
+      y: 30,
+      opacity: 0,
+      duration: 0.7,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.contact-newsletter',
+        start: 'top 88%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    // Social links fade in
+    gsap.from('.contact-socials', {
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.contact-socials',
+        start: 'top 90%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+  }, { scope: sectionRef });
+
+  // GSAP input focus border color transition
+  const handleInputFocus = useCallback((el: HTMLElement | null) => {
+    if (!el) return;
+    gsap.to(el, {
+      borderColor: 'var(--brutal-yellow)',
+      duration: 0.2,
+      ease: 'power2.out',
+    });
+  }, []);
+
+  const handleInputBlur = useCallback((el: HTMLElement | null) => {
+    if (!el) return;
+    gsap.to(el, {
+      borderColor: 'var(--brutal-border)',
+      duration: 0.2,
+      ease: 'power2.out',
+    });
+  }, []);
+
+  // GSAP button hover scale bounce
+  const handleBtnEnter = useCallback((el: HTMLElement | null) => {
+    if (!el) return;
+    gsap.to(el, { scale: 1.04, duration: 0.2, ease: 'back.out(1.4)' });
+  }, []);
+
+  const handleBtnLeave = useCallback((el: HTMLElement | null) => {
+    if (!el) return;
+    gsap.to(el, { scale: 1, duration: 0.2, ease: 'power2.out' });
+  }, []);
+
+  const handleBtnDown = useCallback((el: HTMLElement | null) => {
+    if (!el) return;
+    gsap.to(el, { scale: 0.97, duration: 0.08, ease: 'power2.out' });
+  }, []);
+
+  const handleBtnUp = useCallback((el: HTMLElement | null) => {
+    if (!el) return;
+    gsap.to(el, { scale: 1, duration: 0.15, ease: 'elastic.out(1, 0.3)' });
+  }, []);
+
   return (
-    <section id="contact" className="py-24 md:py-32 lg:py-40 px-6">
+    <section id="contact" ref={sectionRef} className="py-24 md:py-32 lg:py-40 px-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+        <div className="contact-header text-center mb-16">
           <h2 className="section-h2 mb-4" style={{ color: 'var(--brutal-border)' }}>
             START THE CONVERSATION
           </h2>
           <p className="label-text" style={{ color: 'var(--brutal-text-muted)' }}>
-            Have a project in mind? Let's build something extraordinary.
+            Have a project in mind? Let&apos;s build something extraordinary.
           </p>
-        </motion.div>
+        </div>
 
         {/* Contact form */}
-        <motion.form
-          ref={formRef}
+        <form
           onSubmit={handleSubmit}
-          className="space-y-4 mb-12"
+          className="space-y-4 mb-12 relative"
           style={{ background: 'var(--brutal-surface)', border: 'var(--border-thick)', padding: '2rem' }}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
           aria-live="polite"
         >
           {/* Name */}
-          <div>
+          <div className="contact-field">
             <label className="label-text block mb-1" htmlFor="contact-name" style={{ color: 'var(--brutal-text-muted)' }}>NAME</label>
             <input
               id="contact-name"
@@ -98,13 +187,15 @@ export default function Contact() {
                 border: errors.name ? '2px solid var(--brutal-red)' : 'var(--border-thin)',
                 color: 'var(--brutal-border)',
               }}
+              onFocus={(e) => handleInputFocus(e.currentTarget)}
+              onBlur={(e) => handleInputBlur(e.currentTarget)}
               aria-invalid={errors.name || undefined}
               required
             />
           </div>
 
           {/* Email */}
-          <div>
+          <div className="contact-field">
             <label className="label-text block mb-1" htmlFor="contact-email" style={{ color: 'var(--brutal-text-muted)' }}>EMAIL</label>
             <input
               id="contact-email"
@@ -118,13 +209,15 @@ export default function Contact() {
                 border: errors.email ? '2px solid var(--brutal-red)' : 'var(--border-thin)',
                 color: 'var(--brutal-border)',
               }}
+              onFocus={(e) => handleInputFocus(e.currentTarget)}
+              onBlur={(e) => handleInputBlur(e.currentTarget)}
               aria-invalid={errors.email || undefined}
               required
             />
           </div>
 
           {/* Subject */}
-          <div>
+          <div className="contact-field">
             <label className="label-text block mb-1" htmlFor="contact-subject" style={{ color: 'var(--brutal-text-muted)' }}>SUBJECT</label>
             <input
               id="contact-subject"
@@ -138,13 +231,15 @@ export default function Contact() {
                 border: errors.subject ? '2px solid var(--brutal-red)' : 'var(--border-thin)',
                 color: 'var(--brutal-border)',
               }}
+              onFocus={(e) => handleInputFocus(e.currentTarget)}
+              onBlur={(e) => handleInputBlur(e.currentTarget)}
               aria-invalid={errors.subject || undefined}
               required
             />
           </div>
 
           {/* Message */}
-          <div>
+          <div className="contact-field">
             <label className="label-text block mb-1" htmlFor="contact-message" style={{ color: 'var(--brutal-text-muted)' }}>MESSAGE</label>
             <textarea
               id="contact-message"
@@ -158,13 +253,23 @@ export default function Contact() {
                 border: errors.message ? '2px solid var(--brutal-red)' : 'var(--border-thin)',
                 color: 'var(--brutal-border)',
               }}
+              onFocus={(e) => handleInputFocus(e.currentTarget)}
+              onBlur={(e) => handleInputBlur(e.currentTarget)}
               aria-invalid={errors.message || undefined}
               required
             />
           </div>
 
           {/* Submit */}
-          <button type="submit" className="brutal-btn text-xs px-8 py-3 w-full" disabled={success}>
+          <button
+            type="submit"
+            className="brutal-btn text-xs px-8 py-3 w-full min-h-[44px] interactive-press"
+            disabled={success}
+            onMouseEnter={(e) => handleBtnEnter(e.currentTarget)}
+            onMouseLeave={(e) => handleBtnLeave(e.currentTarget)}
+            onMouseDown={(e) => handleBtnDown(e.currentTarget)}
+            onMouseUp={(e) => handleBtnUp(e.currentTarget)}
+          >
             {success ? 'MESSAGE SENT ✓' : 'SEND MESSAGE'}
           </button>
 
@@ -190,15 +295,12 @@ export default function Contact() {
               </div>
             )}
           </AnimatePresence>
-        </motion.form>
+        </form>
 
         {/* Newsletter */}
-        <motion.div
-          className="p-6 mb-12"
+        <div
+          className="contact-newsletter p-6 mb-12"
           style={{ background: 'var(--brutal-surface)', border: 'var(--border-thick)' }}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
         >
           <h3 className="subheading-h3 mb-2" style={{ color: 'var(--brutal-border)' }}>GET STRATEGIC INSIGHTS</h3>
           <p className="text-sm mb-4" style={{ color: 'var(--brutal-text-muted)' }}>
@@ -215,19 +317,21 @@ export default function Contact() {
               aria-label="Newsletter email"
               required
             />
-            <button type="submit" className="brutal-btn text-xs px-6 py-2">
+            <button
+              type="submit"
+              className="brutal-btn text-xs px-6 py-2 min-h-[44px] interactive-press"
+              onMouseEnter={(e) => handleBtnEnter(e.currentTarget)}
+              onMouseLeave={(e) => handleBtnLeave(e.currentTarget)}
+              onMouseDown={(e) => handleBtnDown(e.currentTarget)}
+              onMouseUp={(e) => handleBtnUp(e.currentTarget)}
+            >
               JOIN
             </button>
           </form>
-        </motion.div>
+        </div>
 
         {/* Social links */}
-        <motion.div
-          className="flex justify-center gap-3"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
+        <div className="contact-socials flex justify-center gap-3">
           {socialLinks.map((link) => {
             const Icon = iconMap[link.icon] || Mail;
             return (
@@ -244,7 +348,7 @@ export default function Contact() {
               </a>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

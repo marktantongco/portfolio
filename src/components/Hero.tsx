@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from '@/lib/gsap-setup';
 import { useThreeScene } from '@/hooks/useThreeScene';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import HeroSkeleton from './HeroSkeleton';
@@ -13,6 +14,7 @@ const taglines = [
 
 export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
@@ -20,6 +22,59 @@ export default function Hero() {
 
   // Three.js scene
   useThreeScene(canvasRef);
+
+  // GSAP cinematic entrance timeline
+  useGSAP(() => {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    // Name clip-path reveal (mask wipe left to right)
+    tl.from('.hero-name', {
+      clipPath: 'inset(0 100% 0 0)',
+      duration: 1.2,
+      ease: 'expo.inOut',
+    });
+
+    // Subheadline types in with character-like stagger
+    tl.from('.hero-subtitle', {
+      y: 40,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+    }, '-=0.6');
+
+    // Current Focus block slides in from right with rotation
+    tl.from('.hero-focus', {
+      x: 80,
+      rotation: 3,
+      opacity: 0,
+      duration: 0.7,
+      ease: 'back.out(1.2)',
+    }, '-=0.5');
+
+    // Typewriter container fades in
+    tl.from('.hero-typewriter', {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+    }, '-=0.3');
+
+    // CTA area (scroll indicator) bobs in
+    tl.from('.hero-scroll', {
+      opacity: 0,
+      scale: 0.8,
+      duration: 0.5,
+      ease: 'back.out(1.4)',
+    }, '-=0.2');
+
+    // Continuous scroll indicator bob
+    gsap.to('.hero-scroll', {
+      y: 8,
+      duration: 1.5,
+      ease: 'power1.inOut',
+      yoyo: true,
+      repeat: -1,
+    });
+  }, { scope: containerRef });
 
   // Typewriter effect
   useEffect(() => {
@@ -55,7 +110,11 @@ export default function Hero() {
   }
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <section
+      id="hero"
+      ref={containerRef}
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+    >
       {/* Three.js Canvas */}
       <canvas
         ref={canvasRef}
@@ -84,34 +143,25 @@ export default function Hero() {
       {/* Text overlay */}
       <div className="relative z-10 text-center px-6 pointer-events-none">
         {/* Name */}
-        <motion.h1
-          className="display-h1 mb-4"
+        <h1
+          className="hero-name display-h1 mb-4"
           style={{ color: 'var(--brutal-border)' }}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
         >
           MARK ANTHONY<br />TANTONGCO
-        </motion.h1>
+        </h1>
 
         {/* Headline */}
-        <motion.p
-          className="label-text mb-8"
-          style={{ color: 'var(--brutal-yellow)' }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+        <p
+          className="hero-subtitle label-text mb-8"
+          style={{ color: 'var(--brutal-yellow)', opacity: 0 }}
         >
           AI Creative Strategist | Prompt Architect | Cinematic Vision
-        </motion.p>
+        </p>
 
         {/* Current Focus block */}
-        <motion.div
-          className="inline-block p-4 mb-8 text-left"
-          style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)' }}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
+        <div
+          className="hero-focus inline-block p-4 mb-8 text-left"
+          style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)', opacity: 0 }}
         >
           <span className="label-text block mb-2" style={{ color: 'var(--brutal-text-muted)' }}>CURRENT FOCUS</span>
           <div className="space-y-1.5">
@@ -128,53 +178,22 @@ export default function Hero() {
               <span style={{ color: 'var(--brutal-border)' }}>Refining SEO/GEO optimization frameworks</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Typewriter */}
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
+        <div className="hero-typewriter mb-8" style={{ opacity: 0 }}>
           <p className="text-lg md:text-2xl font-light italic" style={{ color: 'var(--brutal-text-muted)' }}>
             {displayText}
             <span className="inline-block w-0.5 h-5 ml-1" style={{ background: 'var(--brutal-yellow)', animation: 'pulse-dot 1s ease-in-out infinite' }} />
           </p>
-        </motion.div>
+        </div>
 
         {/* Scroll indicator */}
-        <motion.div
-          className="flex flex-col items-center gap-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 8, 0] }}
-          transition={{ opacity: { delay: 1 }, y: { duration: 2, repeat: Infinity } }}
-        >
+        <div className="hero-scroll flex flex-col items-center gap-2" style={{ opacity: 0 }}>
           <span className="label-text" style={{ color: 'var(--brutal-text-muted)' }}>SCROLL</span>
           <ChevronDown size={20} style={{ color: 'var(--brutal-text-muted)' }} />
-        </motion.div>
+        </div>
       </div>
-
-      {/* Corner brackets */}
-      {[
-        { top: '1rem', left: '1rem', borderRight: 'none', borderBottom: 'none' },
-        { top: '1rem', right: '1rem', borderLeft: 'none', borderBottom: 'none' },
-        { bottom: '1rem', left: '1rem', borderRight: 'none', borderTop: 'none' },
-        { bottom: '1rem', right: '1rem', borderLeft: 'none', borderTop: 'none' },
-      ].map((pos, i) => (
-        <motion.div
-          key={i}
-          className="fixed w-8 h-8 pointer-events-none"
-          style={{
-            ...pos,
-            zIndex: 10,
-            border: '2px solid var(--brutal-yellow)',
-            animation: 'bracket-pulse 3s ease-in-out infinite',
-            animationDelay: `${i * 0.5}s`,
-          }}
-          aria-hidden="true"
-        />
-      ))}
 
       {/* Marquee ticker */}
       <div
