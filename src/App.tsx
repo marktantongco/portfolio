@@ -1,100 +1,87 @@
-import { lazy, Suspense, useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Toaster } from 'sonner';
-import ErrorBoundary from '@/components/ErrorBoundary';
-import SkeletonSection from '@/components/Skeleton';
-import LoadingScreen from '@/components/LoadingScreen';
-import ScrollProgress from '@/components/ScrollProgress';
+import { useActiveSection } from '@/hooks/useActiveSection';
+import { useCommandPalette } from '@/hooks/useCommandPalette';
+import { type Project } from '@/lib/data';
+
+// Shell components
 import BackgroundEffects from '@/components/BackgroundEffects';
+import ScrollProgress from '@/components/ScrollProgress';
 import Navigation from '@/components/Navigation';
 import SideNav from '@/components/SideNav';
+import CommandPalette from '@/components/CommandPalette';
+import Footer from '@/components/Footer';
+import LoadingScreen from '@/components/LoadingScreen';
+
+// Content sections
 import Identity from '@/components/Identity';
 import Process from '@/components/Process';
 import Proof from '@/components/Proof/Proof';
 import Trust from '@/components/Trust';
 import Thoughts from '@/components/Thoughts';
 import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
+import ProjectModal from '@/components/ProjectModal';
 
+// Lazy-loaded Hero (most complex, loaded last)
 const Hero = lazy(() => import('@/components/Hero'));
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
+  const { activeSection, scrollToSection } = useActiveSection();
+  const { isOpen: paletteOpen, setIsOpen: setPaletteOpen } = useCommandPalette();
+  const [modalProject, setModalProject] = useState<Project | null>(null);
 
   return (
-    <ErrorBoundary>
-      <LoadingScreen onComplete={() => setLoading(false)} />
+    <>
+      {/* Background effects layer */}
+      <BackgroundEffects />
 
-      {!loading && (
-        <>
-          <ScrollProgress />
-          <BackgroundEffects />
-          <Navigation />
-          <SideNav />
+      {/* Scroll progress bar */}
+      <ScrollProgress />
 
-          <main id="main">
-            {/* Hero: lazy-loaded with skeleton fallback for perceived performance */}
-            <Suspense
-              fallback={
-                <section
-                  id="hero"
-                  className="min-h-screen flex flex-col items-center justify-center relative"
-                  style={{
-                    background: 'radial-gradient(ellipse at center, rgba(255,234,0,0.04) 0%, var(--brutal-void) 70%)',
-                  }}
-                >
-                  {/* Skeleton shimmer while Three.js loads */}
-                  <div className="skeleton" style={{ width: 'clamp(20rem, 50vw, 40rem)', height: '3rem', marginBottom: '1.5rem' }} />
-                  <div className="skeleton" style={{ width: 'clamp(16rem, 40vw, 32rem)', height: '1.5rem', marginBottom: '2rem' }} />
-                  <SkeletonSection rows={2} />
-                </section>
-              }
-            >
-              <Hero />
-            </Suspense>
+      {/* Navigation system */}
+      <Navigation activeSection={activeSection} scrollToSection={scrollToSection} />
+      <SideNav activeSection={activeSection} scrollToSection={scrollToSection} />
+      <CommandPalette
+        isOpen={paletteOpen}
+        setIsOpen={setPaletteOpen}
+        scrollToSection={scrollToSection}
+        activeSection={activeSection}
+      />
 
-            {/* content-visibility: auto on sections below fold for free rendering perf */}
-            <div className="section-below-fold">
-              <Identity />
-            </div>
+      {/* Main content */}
+      <main id="main">
+        {/* Hero — lazy loaded with loading screen */}
+        <Suspense fallback={<LoadingScreen />}>
+          <Hero />
+        </Suspense>
 
-            <div className="section-below-fold">
-              <Process />
-            </div>
+        {/* Content sections */}
+        <Identity />
+        <Process />
+        <Proof onOpenModal={setModalProject} />
+        <Trust />
+        <Thoughts />
+        <Contact />
+      </main>
 
-            <div className="section-below-fold">
-              <Proof />
-            </div>
+      {/* Footer */}
+      <Footer />
 
-            <div className="section-below-fold">
-              <Trust />
-            </div>
+      {/* Case study modal */}
+      <ProjectModal project={modalProject} onClose={() => setModalProject(null)} />
 
-            <div className="section-below-fold">
-              <Thoughts />
-            </div>
-
-            <div className="section-below-fold">
-              <Contact />
-            </div>
-          </main>
-
-          <Footer />
-
-          <Toaster
-            position="bottom-right"
-            richColors
-            toastOptions={{
-              style: {
-                background: 'var(--brutal-surface)',
-                border: 'var(--border-thin)',
-                color: 'var(--brutal-border)',
-                fontFamily: 'system-ui, sans-serif',
-                fontWeight: 600,
-              },
-              }}
-          />
-        </>
-      )}
-    </ErrorBoundary>
+      {/* Toast notifications */}
+      <Toaster
+        position="bottom-right"
+        richColors
+        toastOptions={{
+          style: {
+            background: 'var(--brutal-surface)',
+            border: 'var(--border-thin)',
+            color: 'var(--brutal-border)',
+          },
+        }}
+      />
+    </>
   );
 }

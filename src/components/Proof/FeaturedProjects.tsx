@@ -1,109 +1,98 @@
-import { useState, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { GithubIcon } from '@/lib/social-icons';
 import { projects, type Project } from '@/lib/data';
-import { EASE_SPRING, DURATION, STAGGER } from '@/lib/motion';
-import { SkeletonCard } from '../Skeleton';
 
-const ProjectModal = lazy(() => import('../ProjectModal'));
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+};
 
-export default function FeaturedProjects() {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
 
+interface FeaturedProjectsProps {
+  onOpenModal: (project: Project) => void;
+}
+
+export default function FeaturedProjects({ onOpenModal }: FeaturedProjectsProps) {
   return (
-    <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project, i) => (
-          <motion.div
-            key={project.id}
-            className="brutal-card cursor-pointer group"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: DURATION.enter, delay: i * STAGGER.items, ease: EASE_SPRING }}
-            onClick={() => setSelectedProject(project)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setSelectedProject(project);
-              }
-            }}
-            aria-label={`View ${project.title} case study`}
-          >
-            {/* Gradient mockup */}
-            <div
-              className="w-full h-40 flex items-center justify-center relative overflow-hidden"
-              style={{ background: project.gradient }}
-            >
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+    >
+      {projects.map((project) => (
+        <motion.article
+          key={project.id}
+          variants={cardVariants}
+          whileHover={{ y: -4, boxShadow: '10px 10px 0px var(--brutal-yellow)' }}
+          className="p-6 cursor-pointer"
+          style={{
+            background: 'var(--brutal-surface)',
+            border: 'var(--border-thick)',
+            boxShadow: 'var(--shadow-brutal)',
+          }}
+          onClick={() => onOpenModal(project)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter') onOpenModal(project); }}
+          aria-label={`View case study for ${project.name}`}
+        >
+          {/* Project name */}
+          <h3 className="subheading-h3 mb-2" style={{ color: 'var(--brutal-border)' }}>
+            {project.name}
+          </h3>
+
+          {/* Description */}
+          <p className="text-sm mb-4" style={{ color: 'var(--brutal-text-muted)' }}>
+            {project.description}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {project.tags.map((tag) => (
               <span
-                className="font-black text-2xl tracking-tight uppercase opacity-20 group-hover:opacity-40 transition-opacity"
-                style={{ color: 'var(--brutal-void)' }}
+                key={tag}
+                className="label-text px-2 py-0.5"
+                style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-text-muted)' }}
               >
-                {project.title}
+                {tag}
               </span>
-              <div
-                className="absolute bottom-0 left-0 right-0 h-1"
-                style={{ background: 'var(--brutal-void)', opacity: 0.3 }}
-              />
-            </div>
+            ))}
+          </div>
 
-            {/* Content */}
-            <div className="p-5">
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className="text-[10px] font-semibold tracking-[0.15em] uppercase"
-                  style={{ color: 'var(--brutal-yellow)' }}
-                >
-                  {project.category}
-                </span>
-                <ArrowUpRight
-                  size={16}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ color: 'var(--brutal-text-muted)' }}
-                />
-              </div>
-              <h3
-                className="font-black text-lg tracking-tight uppercase mb-2"
-                style={{ color: 'var(--brutal-border)' }}
-              >
-                {project.title}
-              </h3>
-              <p
-                className="text-xs leading-relaxed mb-4"
-                style={{ color: 'var(--brutal-text-muted)' }}
-              >
-                {project.tagline}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 text-[10px] font-mono"
-                    style={{
-                      background: 'var(--brutal-void)',
-                      color: 'var(--brutal-text-muted)',
-                      border: '1px solid var(--brutal-text-muted)',
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Project modal — lazy loaded */}
-      <Suspense fallback={<SkeletonCard />}>
-        {selectedProject && (
-          <ProjectModal
-            project={selectedProject}
-            onClose={() => setSelectedProject(null)}
-          />
-        )}
-      </Suspense>
-    </div>
+          {/* Action buttons */}
+          <div className="flex gap-2">
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold"
+              style={{ background: 'var(--brutal-yellow)', color: 'var(--brutal-void)', border: 'var(--border-thin)' }}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`View ${project.name} project`}
+            >
+              <ExternalLink size={14} /> View Project
+            </a>
+            <a
+              href={project.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold"
+              style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-border)' }}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`View ${project.name} source code`}
+            >
+              <GithubIcon size={14} /> Source
+            </a>
+          </div>
+        </motion.article>
+      ))}
+    </motion.div>
   );
 }

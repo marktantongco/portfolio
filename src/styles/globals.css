@@ -1,146 +1,56 @@
 @import "tailwindcss";
 
-/* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS — 12-color system. ZERO additional colors.
-   ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   DESIGN SYSTEM — 12 CSS Custom Properties
+   ═══════════════════════════════════════════════════════ */
 :root {
-  --brutal-yellow:      #FFEA00;
-  --brutal-lime:        #ccff00;
-  --brutal-cyan:        #00ffff;
-  --brutal-magenta:     #FF0080;
-  --brutal-gold:        #FFD700;
-  --brutal-orange:      #FF6B00;
-  --brutal-red:         #FF0033;
-  --brutal-green:       #00FF66;
-  --brutal-void:        #0a0a0a;
-  --brutal-surface:     #111111;
-  --brutal-border:      #FFFFFF;
-  --brutal-text-muted:  #666666;
+  --brutal-yellow:  #FFEA00;
+  --brutal-lime:    #ccff00;
+  --brutal-cyan:    #00ffff;
+  --brutal-magenta: #FF0080;
+  --brutal-gold:    #FFD700;
+  --brutal-orange:  #FF6B00;
+  --brutal-red:     #FF0033;
+  --brutal-green:   #00FF66;
+  --brutal-void:    #0a0a0a;
+  --brutal-surface: #111111;
+  --brutal-border:  #FFFFFF;
+  --brutal-text-muted: #666666;
 
-  /* ── Structural tokens ── */
+  /* Brutalist tokens */
   --border-thin:    2px solid var(--brutal-border);
   --border-thick:   4px solid var(--brutal-border);
   --shadow-brutal:  6px 6px 0px var(--brutal-yellow);
   --shadow-brutal-lg: 8px 8px 0px var(--brutal-yellow);
   --shadow-hover:   10px 10px 0px var(--brutal-yellow);
-
-  /* ═══════════════════════════════════════════════════════════════
-     MOTION SYSTEM — single source of truth.
-     Every animation in the app references these tokens.
-     The cubic-bezier(0.16,1,0.3,1) is "expo out" — fast start,
-     gentle deceleration, no bounce. Spring overshoot is layered
-     on top for interactive elements only.
-     ═══════════════════════════════════════════════════════════════ */
-
-  /* Entry: elements appearing. Used by whileInView, stagger reveals. */
-  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-enter: 320ms;
-
-  /* Exit: elements leaving. Slightly faster for snappy feel. */
-  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
-  --duration-exit: 200ms;
-
-  /* Hover: interactive elements responding to pointer. Must feel instant. */
-  --ease-hover: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-hover: 150ms;
-
-  /* Press: tactile feedback on click. Near-instant. */
-  --ease-press: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-press: 80ms;
-
-  /* Layout: structural transitions (tab swap, modal). */
-  --ease-layout: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-layout: 320ms;
-
-  /* Spring: for interactive elements that need overshoot.
-     Stiffness 400 / damping 25 = ~1 bounce, settles in ~400ms.
-     Use ONLY for hover scale, card lift, button press. */
-  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* Legacy (kept for non-critical transitions) */
-  --transition: var(--duration-hover) var(--ease-hover);
+  --radius:         0px;
+  --transition:     150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --easing-bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   BASE
-   ═══════════════════════════════════════════════════════════════ */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* ═══════════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════════ */
+* {
+  box-sizing: border-box;
+}
 
 html {
   scroll-behavior: smooth;
-  /* Fixed header is ~4rem. Prevents anchor links from hiding behind it. */
-  scroll-padding-top: 5rem;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
 }
 
 body {
-  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
   background-color: var(--brutal-void);
   color: var(--brutal-border);
-  overflow-x: hidden;
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent layout shift from scrollbar */
-  scrollbar-gutter: stable;
+  overflow-x: hidden;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   TYPOGRAPHY — Fluid type scale with strong hierarchy.
-   Uses clamp() for fluid sizing. No breakpoint jumps.
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Display: hero name. Massive. Demands attention. */
-.display-h1 {
-  font-size: clamp(3rem, 8vw, 7rem);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 0.9;
-}
-
-/* Section: major section headings. */
-.section-h2 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
-}
-
-/* Subsection: component titles within sections. */
-.subheading-h3 {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: -0.03em;
-}
-
-/* Label: metadata, categories, captions. */
-.label-text {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-/* Body: readable paragraph text. */
-body-text {
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-/* Mono: code and technical content. */
-.mono-text {
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 0.875rem;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   INTERACTION TOKENS
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Focus visible — WCAG AA: 2px solid, 2px offset, high contrast ring. */
+/* Focus visible */
 *:focus-visible {
   outline: 2px solid var(--brutal-yellow);
   outline-offset: 2px;
@@ -152,42 +62,95 @@ body-text {
   color: var(--brutal-void);
 }
 
-/* Press state — active/pressed feedback for interactive elements. */
-.interactive-press:active {
-  transform: scale(0.97);
-  transition: transform var(--duration-press) var(--ease-press);
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--brutal-void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--brutal-border);
+  border: 1px solid var(--brutal-void);
 }
 
-/* Brutalist card — the base interaction pattern. */
+/* ═══════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════════════ */
+.display-h1 {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.section-h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.subheading-h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+}
+
+.heading-h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.label-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.mono-text {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BRUTALIST UTILITIES
+   ═══════════════════════════════════════════════════════ */
 .brutal-card {
   background: var(--brutal-surface);
   border: var(--border-thick);
   box-shadow: var(--shadow-brutal);
-  transition:
-    box-shadow var(--duration-hover) var(--ease-hover),
-    transform var(--duration-hover) var(--ease-hover);
 }
-.brutal-card:hover {
+
+.brutal-card-hover:hover {
   box-shadow: var(--shadow-hover);
   transform: translateY(-4px);
 }
 
-/* Brutalist input */
 .brutal-input {
-  background: var(--brutal-void);
+  background: var(--brutal-surface);
   border: var(--border-thin);
   color: var(--brutal-border);
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  transition: border-color var(--duration-hover) var(--ease-hover);
+  transition: var(--transition);
 }
+
 .brutal-input:focus {
   border-color: var(--brutal-yellow);
   outline: none;
 }
-.brutal-input::placeholder { color: var(--brutal-text-muted); }
 
-/* Brutalist button — primary CTA pattern. */
+.brutal-input::placeholder {
+  color: var(--brutal-text-muted);
+}
+
 .brutal-btn {
   background: var(--brutal-yellow);
   color: var(--brutal-void);
@@ -198,81 +161,34 @@ body-text {
   border: var(--border-thick);
   box-shadow: var(--shadow-brutal);
   cursor: pointer;
+  transition: var(--transition);
   font-size: 0.75rem;
-  min-height: 44px;
-  transition:
-    box-shadow var(--duration-hover) var(--ease-hover),
-    transform var(--duration-hover) var(--ease-hover);
 }
+
 .brutal-btn:hover {
   box-shadow: var(--shadow-hover);
   transform: translateY(-2px);
 }
-.brutal-btn:active {
-  transform: scale(0.97);
-  transition: transform var(--duration-press) var(--ease-press);
-}
 
-/* ═══════════════════════════════════════════════════════════════
-   PERFORMANCE — content-visibility for off-screen sections.
-   This tells the browser to skip rendering sections that
-   aren't near the viewport. Free performance win.
-   ═══════════════════════════════════════════════════════════════ */
-
-@media (min-resolution: 2dppx) {
-  .section-below-fold {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SKELETON LOADING — shimmer placeholder for lazy content.
-   ═══════════════════════════════════════════════════════════════ */
-
-@keyframes skeleton-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--brutal-surface) 25%,
-    rgba(255,255,255,0.04) 50%,
-    var(--brutal-surface) 75%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.5s ease-in-out infinite;
-}
-
-.skeleton-text {
-  height: 1em;
-  border-radius: 0;
-}
-
-.skeleton-heading {
-  height: 2.5em;
-  width: 60%;
-}
-
-.skeleton-card {
-  height: 200px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   KEYFRAMES — only animations that CSS handles.
-   JS animations use Framer Motion tokens above.
-   ═══════════════════════════════════════════════════════════════ */
-
+/* ═══════════════════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
 @keyframes bracket-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes float-rotate {
+  0% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-20px) rotate(90deg); }
+  50% { transform: translateY(0) rotate(180deg); }
+  75% { transform: translateY(20px) rotate(270deg); }
+  100% { transform: translateY(0) rotate(360deg); }
 }
 
 @keyframes confetti {
@@ -281,18 +197,18 @@ body-text {
 }
 
 @keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes spin-reverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
 }
 
 @keyframes scan-line {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(100vw); }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
 }
 
 @keyframes pulse-dot {
@@ -300,55 +216,16 @@ body-text {
   50% { opacity: 0.5; transform: scale(1.5); }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   REDUCED MOTION — disables ALL animation AND hover states.
-   This is the senior-level implementation: not just entry
-   animations, but hover transforms, press scales, everything.
-   ═══════════════════════════════════════════════════════════════ */
-
+/* ═══════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .brutal-card:hover,
-  .brutal-btn:hover {
-    transform: none !important;
-  }
-  .brutal-btn:active {
-    transform: none !important;
-  }
-  .skeleton {
-    animation: none !important;
-    background: var(--brutal-surface) !important;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   SCROLLBAR
-   ═══════════════════════════════════════════════════════════════ */
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--brutal-void); }
-::-webkit-scrollbar-thumb {
-  background: var(--brutal-border);
-  border: 1px solid var(--brutal-void);
-}
-::-webkit-scrollbar-thumb:hover { background: var(--brutal-yellow); }
-
-/* ═══════════════════════════════════════════════════════════════
-   PRINT — stripped brutalist layout for paper/pdf sharing.
-   Every portfolio gets shared as a PDF. Print = death without this.
-   ═══════════════════════════════════════════════════════════════ */
-
-@media print {
-  * { background: white !important; color: black !important; box-shadow: none !important; }
-  body { font-size: 12pt; line-height: 1.5; }
-  nav, .scroll-progress, .side-nav, .command-palette, .loading-screen,
-  .marquee, canvas, .brutal-card:hover, .brutal-btn:hover { display: none !important; }
-  section { break-inside: avoid; page-break-inside: avoid; padding: 1rem 0 !important; }
-  .brutal-card { border: 1px solid #ccc !important; }
-  a { text-decoration: underline; color: black !important; }
 }

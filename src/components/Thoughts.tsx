@@ -1,110 +1,101 @@
 import { motion } from 'framer-motion';
-import { Clock, ArrowUpRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { blogPosts } from '@/lib/data';
-import { EASE_SPRING, DURATION, STAGGER } from '@/lib/motion';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
 
 export default function Thoughts() {
   return (
-    <section
-      id="thoughts"
-      className="py-24 md:py-32 lg:py-40 px-6 relative z-10"
-    >
+    <section id="thoughts" className="py-24 md:py-32 lg:py-40 px-6">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <motion.div
+          className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: DURATION.enter, ease: EASE_SPRING }}
+          viewport={{ once: true }}
         >
-          <p
-            className="text-xs font-semibold tracking-[0.2em] uppercase mb-4"
-            style={{ color: 'var(--brutal-yellow)' }}
-          >
-            // THOUGHTS
-          </p>
-          <h2
-            className="font-black uppercase tracking-tight mb-4"
-            style={{
-              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-              color: 'var(--brutal-border)',
-            }}
-          >
-            WRITINGS
+          <h2 className="section-h2 mb-4" style={{ color: 'var(--brutal-border)' }}>
+            THOUGHTS & PROCESS
           </h2>
-          <p
-            className="text-base max-w-2xl mb-16"
-            style={{ color: 'var(--brutal-text-muted)', lineHeight: 1.7 }}
-          >
-            Thoughts on design, development, and the intersection of technology
-            and creativity.
+          <p className="label-text" style={{ color: 'var(--brutal-text-muted)' }}>
+            Process writeups, technical deep-dives, and strategic frameworks.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {blogPosts.map((post, i) => (
-            <motion.article
+        {/* Blog cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+        >
+          {blogPosts.map((post) => (
+            <motion.a
               key={post.id}
-              className="brutal-card p-6 flex flex-col cursor-pointer group"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: DURATION.enter, delay: i * STAGGER.items, ease: EASE_SPRING }}
+              href={post.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variants={cardVariants}
+              whileHover={{ y: -4, boxShadow: '10px 10px 0px var(--brutal-yellow)' }}
+              className="block p-6"
+              style={{
+                background: 'var(--brutal-surface)',
+                border: 'var(--border-thick)',
+                boxShadow: 'var(--shadow-brutal)',
+              }}
+              aria-label={`Read: ${post.title}`}
             >
-              {/* Category accent bar */}
-              <div
-                className="w-full h-1 mb-4"
-                style={{ background: post.accent }}
-              />
-
-              <div className="flex items-center gap-3 mb-3">
-                <span
-                  className="px-2 py-0.5 text-[10px] font-semibold tracking-wide uppercase"
-                  style={{
-                    background: post.accent,
-                    color: 'var(--brutal-void)',
-                  }}
-                >
+              {/* Category */}
+              <div className="flex items-center gap-2 mb-3">
+                <motion.span
+                  className="inline-block w-2 h-2"
+                  style={{ background: post.categoryAccent }}
+                  whileHover={{ scale: 1.5 }}
+                />
+                <span className="heading-h4 text-xs" style={{ color: post.categoryAccent }}>
                   {post.category}
-                </span>
-                <span
-                  className="text-[10px] font-mono"
-                  style={{ color: 'var(--brutal-text-muted)' }}
-                >
-                  {post.date}
                 </span>
               </div>
 
-              <h3
-                className="font-bold text-base tracking-tight uppercase mb-3 group-hover:translate-x-1 transition-transform"
-                style={{ color: 'var(--brutal-border)' }}
-              >
+              {/* Title */}
+              <h3 className="subheading-h3 mb-3" style={{ color: 'var(--brutal-border)' }}>
                 {post.title}
               </h3>
 
+              {/* Summary */}
               <p
-                className="text-xs leading-relaxed mb-4 flex-1"
-                style={{ color: 'var(--brutal-text-muted)' }}
+                className="text-sm leading-relaxed mb-4"
+                style={{
+                  color: 'var(--brutal-text-muted)',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
               >
-                {post.excerpt}
+                {post.summary}
               </p>
 
-              <div className="flex items-center justify-between mt-auto">
-                <div
-                  className="flex items-center gap-1.5 text-[10px]"
-                  style={{ color: 'var(--brutal-text-muted)' }}
-                >
-                  <Clock size={12} />
-                  {post.readTime}
-                </div>
-                <ArrowUpRight
-                  size={14}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ color: post.accent }}
-                />
-              </div>
-            </motion.article>
+              {/* Read link */}
+              <span
+                className="flex items-center gap-1.5 label-text"
+                style={{ color: 'var(--brutal-yellow)' }}
+              >
+                READ ARTICLE <ArrowRight size={14} />
+              </span>
+            </motion.a>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

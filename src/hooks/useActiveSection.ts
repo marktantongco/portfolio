@@ -1,19 +1,21 @@
-import { useEffect, useState } from 'react';
-import { sectionIds } from '@/lib/data';
+import { useState, useEffect, useCallback } from 'react';
+import type { SectionId } from '@/lib/data';
 
 export function useActiveSection() {
-  const [active, setActive] = useState<string>('hero');
+  const [activeSection, setActiveSection] = useState<SectionId>('hero');
 
   useEffect(() => {
+    const sectionIds: SectionId[] = ['hero', 'identification', 'process', 'proof', 'trust', 'thoughts', 'contact'];
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActive(entry.target.id);
+            setActiveSection(entry.target.id as SectionId);
           }
         });
       },
-      { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' }
+      { threshold: 0.3 }
     );
 
     sectionIds.forEach((id) => {
@@ -24,5 +26,14 @@ export function useActiveSection() {
     return () => observer.disconnect();
   }, []);
 
-  return active;
+  const scrollToSection = useCallback((id: SectionId) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
+  return { activeSection, setActiveSection, scrollToSection } as const;
 }
+
+export type { SectionId };

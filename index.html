@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,20 +7,13 @@
     <!-- Primary Meta -->
     <title>Mark Anthony Tantongco | AI Creative Technologist</title>
     <meta name="description" content="Building at the intersection of bleeding-edge AI, neo-brutalist design, and strategic brand systems." />
-    <meta name="author" content="Mark Anthony Tantongco" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#0a0a0a" />
-
-    <!-- Preload: favicon is render-blocking for browser tab -->
-    <link rel="icon" href="/portfolio/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/portfolio/apple-touch-icon.png" />
-
-    <!-- Preconnect: nothing to preconnect — system fonts, no third-party -->
 
     <!-- Open Graph -->
     <meta property="og:title" content="Mark Anthony Tantongco | AI Creative Technologist" />
     <meta property="og:description" content="Building at the intersection of bleeding-edge AI, neo-brutalist design, and strategic brand systems." />
-    <meta property="og:url" content="https://marktantongco.github.io/portfolio" />
+    <meta property="og:url" content="https://markanthony.dev" />
     <meta property="og:image" content="/portfolio/og-image.png" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
@@ -31,10 +24,14 @@
     <meta name="twitter:title" content="Mark Anthony Tantongco | AI Creative Technologist" />
     <meta name="twitter:description" content="Building at the intersection of bleeding-edge AI, neo-brutalist design, and strategic brand systems." />
 
+    <!-- Favicon & Icons -->
+    <link rel="icon" href="/portfolio/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/portfolio/apple-touch-icon.png" />
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/portfolio/manifest.json" />
 
-    <!-- GEO: RSS feed signals content production to AI crawlers -->
+    <!-- RSS Feed for GEO -->
     <link rel="alternate" type="application/rss+xml" title="Mark Anthony Tantongco — Thoughts" href="/portfolio/blog/feed.xml" />
 
     <!-- JSON-LD Structured Data -->
@@ -60,15 +57,10 @@
     }
     </script>
 
-    <!-- Critical inline CSS: prevents FOUC on load.
-         Sets background to --brutal-void immediately so
-         the page never flashes white. -->
-    <style>
-      html{background:#0a0a0a}body{margin:0;background:#0a0a0a;color:#fff}
-    </style>
-
-    <!-- Skip link — first focusable element, z-200 above everything -->
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:font-bold" style="background:var(--brutal-yellow);color:var(--brutal-void);text-decoration:none;border:4px solid var(--brutal-border)">skip to content</a>
+    <!-- Skip Link — first focusable element -->
+    <a href="#main" style="position:absolute;top:-9999px;left:-9999px;z-index:200;"
+       onfocus="this.style.cssText='position:fixed;top:1rem;left:1rem;z-index:200;background:var(--brutal-yellow);color:var(--brutal-void);padding:0.5rem 1rem;font-weight:700;text-decoration:none;'"
+       onblur="this.style.cssText='position:absolute;top:-9999px;left:-9999px;z-index:200;'">skip to content</a>
   </head>
   <body>
     <div id="root"></div>

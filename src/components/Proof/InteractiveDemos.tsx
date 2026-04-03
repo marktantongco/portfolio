@@ -1,545 +1,426 @@
 import { useState, useCallback } from 'react';
-import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Copy, Check, GripVertical } from 'lucide-react';
+import { demoConfigs, cinematicModes, promptTemplates } from '@/lib/data';
 
-const demoTabs = [
-  { id: 'breakthrough', label: 'BREAKTHROUGH' },
-  { id: 'powerup', label: 'POWERUP' },
-  { id: 'scaffold', label: 'SCAFFOLD' },
-  { id: 'sentient', label: 'SENTIENT' },
-];
+const tabs = demoConfigs;
 
-const colorModes = [
-  { name: 'Neon Void', from: '#FFEA00', to: '#00ffff', bg: '#0a0a0a' },
-  { name: 'Sunset Burn', from: '#FF6B00', to: '#FF0033', bg: '#111111' },
-  { name: 'Matrix Green', from: '#00FF66', to: '#00ff00', bg: '#000000' },
-  { name: 'Cyber Pink', from: '#FF0080', to: '#ccff00', bg: '#0a0a0a' },
-  { name: 'Arctic Blue', from: '#00ffff', to: '#FFFFFF', bg: '#0a0a0a' },
-];
-
-const templates = [
-  'Create a brutalist landing page',
-  'Design a dashboard layout',
-  'Build a portfolio section',
-  'Prototype a contact form',
-];
-
-const constraints = [
-  { label: 'Mobile First', score: 20 },
-  { label: 'Accessible', score: 25 },
-  { label: 'Performance', score: 30 },
-  { label: 'SEO Optimized', score: 15 },
-  { label: 'Dark Mode', score: 10 },
-];
-
+// ─── BREAKTHROUGH: Cinematic Vision Analyzer ───
 function BreakthroughDemo() {
-  const [modeIndex, setModeIndex] = useState(0);
-  const mode = colorModes[modeIndex];
+  const [activeMode, setActiveMode] = useState(cinematicModes[0]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <label
-          className="block text-xs font-semibold tracking-[0.1em] uppercase mb-2"
-          style={{ color: 'var(--brutal-text-muted)' }}
-        >
-          Color Mode
-        </label>
-        <select
-          value={modeIndex}
-          onChange={(e) => setModeIndex(Number(e.target.value))}
-          className="w-full max-w-xs px-3 py-2 text-sm font-semibold outline-none cursor-pointer min-h-[44px]"
-          style={{
-            background: 'var(--brutal-surface)',
-            color: 'var(--brutal-border)',
-            border: 'var(--border-thin)',
-          }}
-        >
-          {colorModes.map((m, i) => (
-            <option key={m.name} value={i}>
-              {m.name}
-            </option>
-          ))}
-        </select>
+    <div className="space-y-4">
+      <h3 className="subheading-h3" style={{ color: 'var(--brutal-magenta)' }}>
+        Cinematic Vision Analyzer
+      </h3>
+
+      {/* Mode selector */}
+      <div className="flex flex-wrap gap-2">
+        {cinematicModes.map((mode) => (
+          <button
+            key={mode.id}
+            onClick={() => setActiveMode(mode)}
+            className="px-3 py-2 text-xs font-bold uppercase transition-all min-h-[44px]"
+            style={{
+              background: activeMode.id === mode.id ? 'var(--brutal-magenta)' : 'var(--brutal-void)',
+              color: activeMode.id === mode.id ? 'var(--brutal-void)' : 'var(--brutal-text-muted)',
+              border: 'var(--border-thin)',
+            }}
+          >
+            {mode.name}
+          </button>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Preview */}
-        <div
-          className="brutal-card p-6 flex items-center justify-center min-h-[200px]"
-          style={{ background: mode.bg }}
-        >
-          <div
-            className="w-32 h-32"
-            style={{
-              background: `linear-gradient(135deg, ${mode.from}, ${mode.to})`,
-              border: '4px solid var(--brutal-border)',
-            }}
-          />
-        </div>
+      {/* Gradient preview */}
+      <div
+        className="h-24 w-full"
+        style={{ background: activeMode.gradient, border: 'var(--border-thin)' }}
+        role="img"
+        aria-label={`${activeMode.name} color grading preview`}
+      />
 
-        {/* Specs */}
-        <div className="brutal-card p-6">
-          <h4
-            className="font-bold text-sm tracking-wide uppercase mb-4"
-            style={{ color: 'var(--brutal-yellow)' }}
-          >
-            Specifications
-          </h4>
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span style={{ color: 'var(--brutal-text-muted)' }}>Mode</span>
-              <span style={{ color: 'var(--brutal-border)' }}>{mode.name}</span>
-            </div>
-            <div className="flex justify-between">
-              <span style={{ color: 'var(--brutal-text-muted)' }}>Primary</span>
-              <span
-                className="font-mono text-xs px-2"
-                style={{
-                  background: 'var(--brutal-void)',
-                  color: mode.from,
-                }}
-              >
-                {mode.from}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span style={{ color: 'var(--brutal-text-muted)' }}>Secondary</span>
-              <span
-                className="font-mono text-xs px-2"
-                style={{
-                  background: 'var(--brutal-void)',
-                  color: mode.to,
-                }}
-              >
-                {mode.to}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span style={{ color: 'var(--brutal-text-muted)' }}>Contrast</span>
-              <span style={{ color: 'var(--brutal-green)' }}>AAA ✓</span>
-            </div>
+      {/* Specs panel */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {activeMode.specs.map((spec) => (
+          <div key={spec.label} className="p-3" style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)' }}>
+            <span className="label-text block mb-1" style={{ color: 'var(--brutal-text-muted)' }}>
+              {spec.label}
+            </span>
+            <span className="text-lg font-bold" style={{ color: 'var(--brutal-magenta)' }}>
+              {spec.value}
+            </span>
           </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── POWERUP: AI Prompt Builder ───
+function PowerUpDemo() {
+  const [prompt, setPrompt] = useState('');
+  const [output, setOutput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleGenerate = useCallback(() => {
+    if (!prompt.trim()) return;
+    setLoading(true);
+    setOutput('');
+    setTimeout(() => {
+      const sampleOutputs = [
+        `[System Analysis Complete]\n\nPrompt Score: 94/100\nComplexity: Advanced\nEstimated Tokens: 847\n\nOptimized Prompt:\n"${prompt.trim()}, with emphasis on precision, clarity, and actionable output structure. Maintain brand voice consistency throughout."]\n\nRecommendations:\n- Add specificity constraints for better output control\n- Consider few-shot examples for consistency\n- Temperature 0.7 recommended for this use case`,
+        `[Generation Pipeline Ready]\n\nInput Quality: Excellent\nOutput Type: Creative / Strategic\nEstimated Latency: 1.2s\n\nRefined Output:\n"Based on your input, I recommend a multi-pass approach:\n1. First pass: Broad creative exploration\n2. Second pass: Constraint-based refinement\n3. Third pass: Brand alignment verification\n\n${prompt.trim()}"\n\nConfidence: 96%`,
+      ];
+      setOutput(sampleOutputs[Math.floor(Math.random() * sampleOutputs.length)]);
+      setLoading(false);
+    }, 2000);
+  }, [prompt]);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(output);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="subheading-h3" style={{ color: 'var(--brutal-cyan)' }}>
+        AI Prompt Builder
+      </h3>
+
+      {/* Template buttons */}
+      <div className="flex flex-wrap gap-2">
+        {promptTemplates.map((tpl) => (
+          <button
+            key={tpl.id}
+            onClick={() => setPrompt(tpl.template)}
+            className="px-3 py-1.5 text-xs font-bold uppercase min-h-[44px]"
+            style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-text-muted)' }}
+          >
+            {tpl.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Input */}
+      <textarea
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Enter your prompt or select a template above..."
+        rows={4}
+        className="w-full p-3 text-sm resize-none"
+        style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-border)' }}
+      />
+
+      {/* Generate button */}
+      <button
+        onClick={handleGenerate}
+        disabled={loading}
+        className="brutal-btn text-xs px-6 py-2 disabled:opacity-50"
+      >
+        {loading ? 'GENERATING...' : 'GENERATE'}
+      </button>
+
+      {/* Output */}
+      <AnimatePresence>
+        {(output || loading) && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="relative"
+          >
+            <div
+              className="p-4 text-sm font-mono whitespace-pre-wrap min-h-[200px]"
+              style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-green)' }}
+            >
+              {loading ? (
+                <motion.span
+                  animate={{ opacity: [0.3, 1, 0.3] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  Processing prompt parameters...
+                </motion.span>
+              ) : (
+                output
+              )}
+            </div>
+            {!loading && output && (
+              <button
+                onClick={handleCopy}
+                className="absolute top-2 right-2 p-2"
+                style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)' }}
+                aria-label="Copy output to clipboard"
+              >
+                {copied ? <Check size={16} style={{ color: 'var(--brutal-green)' }} /> : <Copy size={16} />}
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ─── SCAFFOLD: Physics-First Builder ───
+function ScaffoldDemo() {
+  const allConstraints = [
+    'Temperature', 'Top-P', 'Frequency Penalty', 'Max Tokens',
+    'Presence Penalty', 'Stop Sequences', 'System Prompt', 'Output Schema',
+  ];
+  const [available, setAvailable] = useState(allConstraints);
+  const [active, setActive] = useState<string[]>([]);
+
+  const confidence = Math.min(100, Math.round((active.length / allConstraints.length) * 100));
+  const confidenceColor = confidence < 40 ? 'var(--brutal-red)' : confidence < 70 ? 'var(--brutal-yellow)' : 'var(--brutal-green)';
+
+  const handleDrag = (constraint: string) => {
+    if (available.includes(constraint)) {
+      setAvailable(available.filter((c) => c !== constraint));
+      setActive([...active, constraint]);
+    } else {
+      setActive(active.filter((c) => c !== constraint));
+      setAvailable([...available, constraint]);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="subheading-h3" style={{ color: 'var(--brutal-lime)' }}>
+        Physics-First Builder
+      </h3>
+
+      {/* Confidence score */}
+      <div className="flex items-center gap-4">
+        <span className="label-text" style={{ color: 'var(--brutal-text-muted)' }}>CONFIDENCE</span>
+        <div className="flex-1 h-4 relative" style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)' }}>
+          <motion.div
+            className="h-full"
+            style={{ background: confidenceColor }}
+            animate={{ width: `${confidence}%` }}
+            transition={{ duration: 0.5 }}
+          />
+          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold" style={{ color: 'var(--brutal-void)' }}>
+            {confidence}%
+          </span>
+        </div>
+      </div>
+
+      {/* Available constraints */}
+      <div>
+        <span className="label-text block mb-2" style={{ color: 'var(--brutal-text-muted)' }}>AVAILABLE CONSTRAINTS</span>
+        <div className="flex flex-wrap gap-2 min-h-[60px] p-3" style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)' }}>
+          {available.map((c) => (
+            <button
+              key={c}
+              onClick={() => handleDrag(c)}
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold cursor-grab active:cursor-grabbing min-h-[44px]"
+              style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)', color: 'var(--brutal-border)' }}
+            >
+              <GripVertical size={12} style={{ color: 'var(--brutal-text-muted)' }} />
+              {c}
+            </button>
+          ))}
+          {available.length === 0 && (
+            <span className="text-xs" style={{ color: 'var(--brutal-text-muted)' }}>All constraints activated</span>
+          )}
+        </div>
+      </div>
+
+      {/* Active constraints */}
+      <div>
+        <span className="label-text block mb-2" style={{ color: 'var(--brutal-green)' }}>ACTIVE CONSTRAINTS</span>
+        <div className="flex flex-wrap gap-2 min-h-[60px] p-3" style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)' }}>
+          {active.map((c) => (
+            <button
+              key={c}
+              onClick={() => handleDrag(c)}
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold cursor-grab active:cursor-grabbing min-h-[44px]"
+              style={{ background: 'var(--brutal-void)', border: '1px solid var(--brutal-green)', color: 'var(--brutal-green)' }}
+            >
+              <GripVertical size={12} />
+              {c}
+            </button>
+          ))}
+          {active.length === 0 && (
+            <span className="text-xs" style={{ color: 'var(--brutal-text-muted)' }}>Click constraints above to activate</span>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function PowerupDemo() {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
+// ─── SENTIENT: Design Token System ───
+function SentientDemo() {
+  const [color, setColor] = useState('var(--brutal-yellow)');
+  const [spacing, setSpacing] = useState('8');
+  const [fontSize, setFontSize] = useState('16');
+  const [borderWidth, setBorderWidth] = useState('2');
 
-  const generate = useCallback(
-    (template?: string) => {
-      const text = template || input;
-      if (!text.trim()) return;
-      setOutput(
-        `✦ ${text}\n\n→ Layout: Grid-based brutalist structure\n→ Typography: System fonts, weight 900 headings\n→ Colors: High contrast with accent pops\n→ Animation: Framer Motion transitions\n→ Status: READY TO BUILD`
-      );
-    },
-    [input]
-  );
+  const cssOutput = `:root {
+  --color-primary: ${color};
+  --spacing-base: ${spacing}px;
+  --font-size-base: ${fontSize}px;
+  --border-width: ${borderWidth}px;
+}`;
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(cssOutput);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <label
-          className="block text-xs font-semibold tracking-[0.1em] uppercase mb-2"
-          style={{ color: 'var(--brutal-text-muted)' }}
-        >
-          Describe your project
-        </label>
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter your project description..."
-          rows={4}
-          className="w-full px-4 py-3 text-sm outline-none resize-none"
-          style={{
-            background: 'var(--brutal-surface)',
-            color: 'var(--brutal-border)',
-            border: 'var(--border-thin)',
-          }}
-        />
+    <div className="space-y-4">
+      <h3 className="subheading-h3" style={{ color: 'var(--brutal-gold)' }}>
+        Design Token System
+      </h3>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* Color picker */}
+        <div>
+          <label className="label-text block mb-1" style={{ color: 'var(--brutal-text-muted)' }}>COLOR</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="w-10 h-10 cursor-pointer"
+              style={{ border: 'var(--border-thin)', background: 'none' }}
+              aria-label="Select color"
+            />
+            <span className="text-xs font-mono" style={{ color: 'var(--brutal-text-muted)' }}>{color}</span>
+          </div>
+        </div>
+
+        {/* Spacing */}
+        <div>
+          <label className="label-text block mb-1" style={{ color: 'var(--brutal-text-muted)' }}>SPACING</label>
+          <select
+            value={spacing}
+            onChange={(e) => setSpacing(e.target.value)}
+            className="w-full p-2 text-xs"
+            style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-border)' }}
+          >
+            <option value="4">4px</option>
+            <option value="8">8px</option>
+            <option value="12">12px</option>
+            <option value="16">16px</option>
+          </select>
+        </div>
+
+        {/* Font size */}
+        <div>
+          <label className="label-text block mb-1" style={{ color: 'var(--brutal-text-muted)' }}>TYPOGRAPHY</label>
+          <select
+            value={fontSize}
+            onChange={(e) => setFontSize(e.target.value)}
+            className="w-full p-2 text-xs"
+            style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-border)' }}
+          >
+            <option value="12">12px</option>
+            <option value="14">14px</option>
+            <option value="16">16px</option>
+            <option value="18">18px</option>
+          </select>
+        </div>
+
+        {/* Border width */}
+        <div>
+          <label className="label-text block mb-1" style={{ color: 'var(--brutal-text-muted)' }}>BORDER</label>
+          <select
+            value={borderWidth}
+            onChange={(e) => setBorderWidth(e.target.value)}
+            className="w-full p-2 text-xs"
+            style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-border)' }}
+          >
+            <option value="2">2px</option>
+            <option value="4">4px</option>
+          </select>
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {templates.map((t) => (
-          <button
-            key={t}
-            onClick={() => generate(t)}
-            className="px-3 py-1.5 text-xs font-semibold tracking-wide cursor-pointer transition-all duration-150 hover:translate-y-[2px] min-h-[44px] inline-flex items-center interactive-press"
-            style={{
-              background: 'var(--brutal-surface)',
-              color: 'var(--brutal-cyan)',
-              border: 'var(--border-thin)',
-            }}
-          >
-            {t}
-          </button>
-        ))}
-        <button
-          onClick={() => generate()}
-          className="px-4 py-1.5 text-xs font-bold tracking-wide cursor-pointer transition-all duration-150 hover:translate-y-[2px] min-h-[44px] inline-flex items-center interactive-press"
-          style={{
-            background: 'var(--brutal-yellow)',
-            color: 'var(--brutal-void)',
-            border: 'var(--border-thick)',
-          }}
+      {/* CSS Output */}
+      <div className="relative">
+        <pre
+          className="p-4 text-sm font-mono overflow-x-auto"
+          style={{ background: 'var(--brutal-void)', border: 'var(--border-thin)', color: 'var(--brutal-green)' }}
         >
-          GENERATE
+          <code>{cssOutput}</code>
+        </pre>
+        <button
+          onClick={handleCopy}
+          className="absolute top-2 right-2 p-2"
+          style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)' }}
+          aria-label="Copy CSS to clipboard"
+        >
+          {copied ? <Check size={16} style={{ color: 'var(--brutal-green)' }} /> : <Copy size={16} />}
         </button>
       </div>
 
-      {output && (
-        <div
-          className="brutal-card p-6"
-          style={{ borderLeft: '4px solid var(--brutal-green)' }}
-        >
-          <pre
-            className="text-sm whitespace-pre-wrap font-mono leading-relaxed"
-            style={{ color: 'var(--brutal-border)' }}
-          >
-            {output}
-          </pre>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ScaffoldDemo() {
-  const [chips, setChips] = useState(constraints);
-
-  const toggleChip = (index: number) => {
-    setChips((prev) =>
-      prev.map((c, i) =>
-        i === index
-          ? { ...c, score: c.score > 0 ? 0 : constraints[i].score }
-          : c
-      )
-    );
-  };
-
-  const total = chips.reduce((sum, c) => sum + c.score, 0);
-
-  return (
-    <div className="space-y-6">
-      <p
-        className="text-sm"
-        style={{ color: 'var(--brutal-text-muted)' }}
+      {/* Live preview */}
+      <div
+        className="p-4"
+        style={{
+          background: 'var(--brutal-void)',
+          border: `${borderWidth}px solid ${color}`,
+          padding: `${spacing}px`,
+          fontSize: `${fontSize}px`,
+        }}
       >
-        Click to toggle constraints and see the confidence score update in
-        real-time.
-      </p>
-
-      <div className="flex flex-wrap gap-3">
-        {chips.map((chip, i) => (
-          <button
-            key={chip.label}
-            onClick={() => toggleChip(i)}
-            className={cn(
-              'px-4 py-2 text-xs font-semibold tracking-wide cursor-pointer transition-all duration-150 min-h-[44px] inline-flex items-center interactive-press'
-            )}
-            style={{
-              background:
-                chip.score > 0
-                  ? 'var(--brutal-surface)'
-                  : 'var(--brutal-void)',
-              color:
-                chip.score > 0
-                  ? 'var(--brutal-border)'
-                  : 'var(--brutal-text-muted)',
-              border: chip.score > 0
-                ? '2px solid var(--brutal-yellow)'
-                : '2px solid var(--brutal-text-muted)',
-              opacity: chip.score > 0 ? 1 : 0.4,
-              textDecoration: chip.score > 0 ? 'none' : 'line-through',
-            }}
-          >
-            {chip.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="brutal-card p-6">
-        <div className="flex justify-between items-center mb-3">
-          <span
-            className="text-sm font-semibold"
-            style={{ color: 'var(--brutal-border)' }}
-          >
-            Confidence Score
-          </span>
-          <span
-            className="text-2xl font-black font-mono"
-            style={{
-              color:
-                total >= 80
-                  ? 'var(--brutal-green)'
-                  : total >= 50
-                    ? 'var(--brutal-yellow)'
-                    : 'var(--brutal-red)',
-            }}
-          >
-            {total}%
-          </span>
-        </div>
-        <div
-          className="h-4 w-full"
-          style={{ background: 'var(--brutal-void)' }}
-        >
-          <div
-            className="h-full transition-all duration-300"
-            style={{
-              width: `${total}%`,
-              background:
-                total >= 80
-                  ? 'var(--brutal-green)'
-                  : total >= 50
-                    ? 'var(--brutal-yellow)'
-                    : 'var(--brutal-red)',
-            }}
-          />
-        </div>
-        <p
-          className="text-xs mt-2 font-mono"
-          style={{ color: 'var(--brutal-text-muted)' }}
-        >
-          {total === 100
-            ? '✓ All constraints active — maximum confidence'
-            : total === 0
-              ? '✗ No constraints — no confidence'
-              : `${chips.filter((c) => c.score > 0).length}/${chips.length} constraints active`}
-        </p>
+        <p style={{ color }}>Sample text with your design tokens applied.</p>
       </div>
     </div>
   );
 }
 
-function SentientDemo() {
-  const [bgColor, setBgColor] = useState('#0a0a0a');
-  const [textColor, setTextColor] = useState('#FFFFFF');
-  const [borderStyle, setBorderStyle] = useState('solid');
-  const [fontWeight, setFontWeight] = useState('900');
-  const [padding, setPadding] = useState('24px');
-
-  const cssOutput = `.brutal-element {
-  background-color: ${bgColor};
-  color: ${textColor};
-  border: 4px ${borderStyle} var(--brutal-yellow);
-  font-weight: ${fontWeight};
-  padding: ${padding};
-  box-shadow: 6px 6px 0px var(--brutal-yellow);
-}`;
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Controls */}
-      <div className="space-y-4">
-        <div>
-          <label
-            className="block text-xs font-semibold tracking-[0.1em] uppercase mb-2"
-            style={{ color: 'var(--brutal-text-muted)' }}
-          >
-            Background Color
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={bgColor}
-              onChange={(e) => setBgColor(e.target.value)}
-              className="w-10 h-10 cursor-pointer"
-              style={{ border: 'var(--border-thin)' }}
-            />
-            <span
-              className="font-mono text-xs"
-              style={{ color: 'var(--brutal-text-muted)' }}
-            >
-              {bgColor}
-            </span>
-          </div>
-        </div>
-
-        <div>
-          <label
-            className="block text-xs font-semibold tracking-[0.1em] uppercase mb-2"
-            style={{ color: 'var(--brutal-text-muted)' }}
-          >
-            Text Color
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={textColor}
-              onChange={(e) => setTextColor(e.target.value)}
-              className="w-10 h-10 cursor-pointer"
-              style={{ border: 'var(--border-thin)' }}
-            />
-            <span
-              className="font-mono text-xs"
-              style={{ color: 'var(--brutal-text-muted)' }}
-            >
-              {textColor}
-            </span>
-          </div>
-        </div>
-
-        <div>
-          <label
-            className="block text-xs font-semibold tracking-[0.1em] uppercase mb-2"
-            style={{ color: 'var(--brutal-text-muted)' }}
-          >
-            Border Style
-          </label>
-          <select
-            value={borderStyle}
-            onChange={(e) => setBorderStyle(e.target.value)}
-            className="w-full max-w-xs px-3 py-2 text-sm font-semibold outline-none cursor-pointer min-h-[44px]"
-            style={{
-              background: 'var(--brutal-surface)',
-              color: 'var(--brutal-border)',
-              border: 'var(--border-thin)',
-            }}
-          >
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-            <option value="double">Double</option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            className="block text-xs font-semibold tracking-[0.1em] uppercase mb-2"
-            style={{ color: 'var(--brutal-text-muted)' }}
-          >
-            Font Weight
-          </label>
-          <select
-            value={fontWeight}
-            onChange={(e) => setFontWeight(e.target.value)}
-            className="w-full max-w-xs px-3 py-2 text-sm font-semibold outline-none cursor-pointer min-h-[44px]"
-            style={{
-              background: 'var(--brutal-surface)',
-              color: 'var(--brutal-border)',
-              border: 'var(--border-thin)',
-            }}
-          >
-            <option value="400">400 — Regular</option>
-            <option value="600">600 — Semi Bold</option>
-            <option value="700">700 — Bold</option>
-            <option value="900">900 — Black</option>
-          </select>
-        </div>
-
-        <div>
-          <label
-            className="block text-xs font-semibold tracking-[0.1em] uppercase mb-2"
-            style={{ color: 'var(--brutal-text-muted)' }}
-          >
-            Padding
-          </label>
-          <select
-            value={padding}
-            onChange={(e) => setPadding(e.target.value)}
-            className="w-full max-w-xs px-3 py-2 text-sm font-semibold outline-none cursor-pointer min-h-[44px]"
-            style={{
-              background: 'var(--brutal-surface)',
-              color: 'var(--brutal-border)',
-              border: 'var(--border-thin)',
-            }}
-          >
-            <option value="8px">8px — Tight</option>
-            <option value="16px">16px — Compact</option>
-            <option value="24px">24px — Normal</option>
-            <option value="32px">32px — Spacious</option>
-            <option value="48px">48px — Generous</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Output */}
-      <div className="space-y-4">
-        {/* Live preview */}
-        <div
-          className="flex items-center justify-center min-h-[120px]"
-          style={{ background: 'var(--brutal-surface)' }}
-        >
-          <div
-            style={{
-              backgroundColor: bgColor,
-              color: textColor,
-              border: `4px ${borderStyle} var(--brutal-yellow)`,
-              fontWeight: Number(fontWeight),
-              padding: padding,
-              boxShadow: '6px 6px 0px var(--brutal-yellow)',
-              textTransform: 'uppercase' as const,
-              letterSpacing: '0.05em',
-              fontSize: '0.875rem',
-            }}
-          >
-            BRUTAL ELEMENT
-          </div>
-        </div>
-
-        {/* CSS output */}
-        <div
-          className="brutal-card p-4 overflow-x-auto"
-          style={{ borderLeft: '4px solid var(--brutal-cyan)' }}
-        >
-          <pre
-            className="text-xs font-mono leading-relaxed"
-            style={{ color: 'var(--brutal-green)' }}
-          >
-            {cssOutput}
-          </pre>
-        </div>
-      </div>
-    </div>
-  );
-}
-
+// ─── MAIN COMPONENT ───
 export default function InteractiveDemos() {
-  const [activeDemo, setActiveDemo] = useState('breakthrough');
+  const [activeDemo, setActiveDemo] = useState(tabs[0].id);
 
   return (
     <div>
       {/* Demo tabs */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {demoTabs.map((tab) => (
+      <div className="flex flex-wrap gap-2 mb-6">
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveDemo(tab.id)}
-            className={cn(
-              'px-3 py-1.5 text-xs font-semibold tracking-wide uppercase cursor-pointer transition-all duration-150 min-h-[44px] inline-flex items-center interactive-press'
-            )}
+            className="px-3 py-2 text-xs font-bold uppercase min-h-[44px]"
             style={{
-              background:
-                activeDemo === tab.id
-                  ? 'var(--brutal-yellow)'
-                  : 'transparent',
-              color:
-                activeDemo === tab.id
-                  ? 'var(--brutal-void)'
-                  : 'var(--brutal-border)',
+              background: activeDemo === tab.id ? tab.accent : 'var(--brutal-void)',
+              color: activeDemo === tab.id ? 'var(--brutal-void)' : 'var(--brutal-text-muted)',
               border: 'var(--border-thin)',
             }}
           >
-            {tab.label}
+            {tab.name}
           </button>
         ))}
       </div>
 
       {/* Demo content */}
-      <div
-        className="brutal-card p-6"
-        style={{ minHeight: 300 }}
-      >
-        {activeDemo === 'breakthrough' && <BreakthroughDemo />}
-        {activeDemo === 'powerup' && <PowerupDemo />}
-        {activeDemo === 'scaffold' && <ScaffoldDemo />}
-        {activeDemo === 'sentient' && <SentientDemo />}
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeDemo}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.3 }}
+          className="p-6 min-h-[350px]"
+          style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)' }}
+        >
+          {activeDemo === 'breakthrough' && <BreakthroughDemo />}
+          {activeDemo === 'powerup' && <PowerUpDemo />}
+          {activeDemo === 'scaffold' && <ScaffoldDemo />}
+          {activeDemo === 'sentient' && <SentientDemo />}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

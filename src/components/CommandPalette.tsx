@@ -1,150 +1,128 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X } from 'lucide-react';
-import { navItems } from '@/lib/data';
+import { Search } from 'lucide-react';
+import { commandPaletteItems, type SectionId } from '@/lib/data';
 
-export default function CommandPalette() {
-  const [open, setOpen] = useState(false);
+interface CommandPaletteProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  scrollToSection: (id: SectionId) => void;
+  activeSection: SectionId;
+}
+
+export default function CommandPalette({ isOpen, setIsOpen, scrollToSection, activeSection }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const toggle = useCallback(() => setOpen((o) => !o), []);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        toggle();
-      }
-      if (e.key === 'Escape') setOpen(false);
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [toggle]);
-
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
-
-  const filtered = navItems.filter((item) =>
+  const filtered = commandPaletteItems.filter((item) =>
     item.label.toLowerCase().includes(query.toLowerCase())
   );
 
-  return (
-    <>
-      {/* Keyboard hint */}
-      <button
-        onClick={toggle}
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 text-xs font-mono tracking-wide cursor-pointer"
-        style={{
-          background: 'var(--brutal-surface)',
-          border: 'var(--border-thin)',
-          color: 'var(--brutal-text-muted)',
-        }}
-        aria-label="Open command palette (Ctrl+K)"
-      >
-        <Search size={14} />
-        <span>Ctrl+K</span>
-      </button>
+  useEffect(() => {
+    if (isOpen) {
+      setQuery('');
+      setSelectedIndex(0);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [isOpen]);
 
-      <AnimatePresence>
-        {open && (
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
+
+  const handleSelect = (item: typeof commandPaletteItems[0]) => {
+    if (item.action === 'scroll' && item.section) {
+      scrollToSection(item.section);
+    } else if (item.url) {
+      window.open(item.url, '_blank', 'noopener');
+    }
+    setIsOpen(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex((prev) => Math.min(prev + 1, filtered.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex((prev) => Math.max(prev - 1, 0));
+    } else if (e.key === 'Enter' && filtered[selectedIndex]) {
+      handleSelect(filtered[selectedIndex]);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 z-[80] flex items-start justify-center pt-[15vh]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            className="fixed inset-0"
+            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 59 }}
+            onClick={() => setIsOpen(false)}
+          />
+
+          {/* Modal */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed left-1/2 top-[20%] -translate-x-1/2 w-full max-w-lg p-0"
+            style={{ zIndex: 60, background: 'var(--brutal-surface)', border: 'var(--border-thick)', boxShadow: 'var(--shadow-brutal-lg)' }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command palette"
           >
-            {/* Backdrop */}
-            <div
-              className="absolute inset-0"
-              style={{ background: 'rgba(10,10,10,0.8)' }}
-              onClick={() => setOpen(false)}
-            />
+            {/* Search input */}
+            <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: 'var(--border-thin)' }}>
+              <Search size={18} style={{ color: 'var(--brutal-text-muted)' }} />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Jump to section or action..."
+                className="flex-1 bg-transparent outline-none text-sm"
+                style={{ color: 'var(--brutal-border)' }}
+                aria-label="Search"
+              />
+              <kbd className="label-text px-2 py-0.5" style={{ background: 'var(--brutal-void)', color: 'var(--brutal-text-muted)', border: 'var(--border-thin)' }}>ESC</kbd>
+            </div>
 
-            {/* Panel */}
-            <motion.div
-              className="relative w-full max-w-lg mx-4"
-              style={{
-                background: 'var(--brutal-surface)',
-                border: 'var(--border-thick)',
-                boxShadow: 'var(--shadow-brutal-lg)',
-              }}
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Command palette"
-            >
-              {/* Search input */}
-              <div
-                className="flex items-center gap-3 px-4 py-3"
-                style={{ borderBottom: 'var(--border-thin)' }}
-              >
-                <Search
-                  size={18}
-                  style={{ color: 'var(--brutal-text-muted)' }}
-                />
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Jump to section..."
-                  className="flex-1 bg-transparent outline-none text-sm"
-                  style={{ color: 'var(--brutal-border)' }}
-                  aria-label="Search sections"
-                />
-                <button
-                  onClick={() => setOpen(false)}
-                  className="p-1 cursor-pointer"
-                  style={{ color: 'var(--brutal-text-muted)' }}
-                  aria-label="Close command palette"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Results */}
-              <ul className="max-h-64 overflow-y-auto py-2">
-                {filtered.length === 0 && (
-                  <li
-                    className="px-4 py-3 text-sm"
-                    style={{ color: 'var(--brutal-text-muted)' }}
+            {/* Results */}
+            <ul className="max-h-80 overflow-y-auto py-2">
+              {filtered.map((item, i) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleSelect(item)}
+                    className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 transition-colors"
+                    style={{
+                      background: i === selectedIndex ? 'var(--brutal-void)' : 'transparent',
+                      color: i === selectedIndex ? 'var(--brutal-yellow)' : 'var(--brutal-border)',
+                    }}
+                    onMouseEnter={() => setSelectedIndex(i)}
                   >
-                    No results found
-                  </li>
-                )}
-                {filtered.map((item) => (
-                  <li key={item.id}>
-                    <a
-                      href={`#${item.id}`}
-                      onClick={() => setOpen(false)}
-                      className="block px-4 py-3 text-sm font-semibold tracking-wide uppercase hover:opacity-80 transition-opacity cursor-pointer"
-                      style={{
-                        color: 'var(--brutal-border)',
-                      }}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+                    <span className="label-text" style={{ color: 'var(--brutal-text-muted)', minWidth: 24 }}>
+                      {item.action === 'external' ? '↗' : '→'}
+                    </span>
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+              {filtered.length === 0 && (
+                <li className="px-4 py-3 text-sm" style={{ color: 'var(--brutal-text-muted)' }}>
+                  No results found.
+                </li>
+              )}
+            </ul>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
