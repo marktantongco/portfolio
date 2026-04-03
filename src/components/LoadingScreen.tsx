@@ -1,75 +1,90 @@
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function LoadingScreen() {
+interface LoadingScreenProps {
+  onComplete: () => void;
+}
+
+export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
+  const [progress, setProgress] = useState(0);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((p) => {
+        const next = p + Math.random() * 15 + 5;
+        if (next >= 100) {
+          clearInterval(interval);
+          setTimeout(() => setDone(true), 300);
+          setTimeout(() => onComplete(), 800);
+          return 100;
+        }
+        return next;
+      });
+    }, 120);
+
+    return () => clearInterval(interval);
+  }, [onComplete]);
+
   return (
-    <div
-      className="fixed inset-0 flex flex-col items-center justify-center"
-      style={{ background: 'var(--brutal-void)', zIndex: 100 }}
-      role="status"
-      aria-label="Loading portfolio"
-    >
-      {/* MT Logo */}
-      <motion.h1
-        className="display-h1 mb-4"
-        style={{ color: 'var(--brutal-yellow)' }}
-        animate={{ opacity: [1, 0.5, 1] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        MT
-      </motion.h1>
-
-      {/* Label */}
-      <p className="label-text mb-8" style={{ color: 'var(--brutal-text-muted)' }}>
-        INITIALIZING SYSTEMS
-      </p>
-
-      {/* Dual counter-rotating rings */}
-      <div className="relative w-24 h-24 mb-8">
-        <div
-          className="absolute inset-0"
-          style={{
-            border: '3px solid var(--brutal-yellow)',
-            borderTopColor: 'transparent',
-            borderRadius: '50%',
-            animation: 'spin-slow 2s linear infinite',
-          }}
-        />
-        <div
-          className="absolute inset-3"
-          style={{
-            border: '3px solid var(--brutal-magenta)',
-            borderBottomColor: 'transparent',
-            borderRadius: '50%',
-            animation: 'spin-reverse 1.5s linear infinite',
-          }}
-        />
-      </div>
-
-      {/* Progress bar */}
-      <div className="w-64 h-1 overflow-hidden" style={{ background: 'var(--brutal-surface)' }}>
+    <AnimatePresence>
+      {!done && (
         <motion.div
-          className="h-full"
-          style={{ background: 'linear-gradient(90deg, var(--brutal-yellow), var(--brutal-cyan))' }}
-          initial={{ width: '0%' }}
-          animate={{ width: '100%' }}
-          transition={{ duration: 2, ease: 'easeInOut' }}
-        />
-      </div>
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center"
+          style={{ background: 'var(--brutal-void)' }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Dual rings */}
+          <div className="relative w-24 h-24 mb-8">
+            <div
+              className="absolute inset-0 border-4 animate-spin"
+              style={{
+                borderColor: 'var(--brutal-yellow)',
+                borderTopColor: 'transparent',
+                animationDuration: '1s',
+              }}
+            />
+            <div
+              className="absolute inset-2 border-4 animate-spin"
+              style={{
+                borderColor: 'var(--brutal-cyan)',
+                borderBottomColor: 'transparent',
+                animationDuration: '0.7s',
+                animationDirection: 'reverse',
+              }}
+            />
+            {/* MT logo */}
+            <div
+              className="absolute inset-0 flex items-center justify-center font-black text-xl tracking-tighter"
+              style={{ color: 'var(--brutal-border)' }}
+            >
+              MT
+            </div>
+          </div>
 
-      {/* Scan lines */}
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="absolute h-px w-full"
-          style={{
-            background: 'var(--brutal-yellow)',
-            opacity: 0.1,
-            top: `${33 + i * 33}%`,
-          }}
-          animate={{ x: ['-100%', '100vw'] }}
-          transition={{ duration: 3, repeat: Infinity, delay: i * 0.5, ease: 'linear' }}
-        />
-      ))}
-    </div>
+          {/* Progress bar */}
+          <div
+            className="w-48 h-2 mb-3"
+            style={{ background: 'var(--brutal-surface)' }}
+          >
+            <motion.div
+              className="h-full"
+              style={{ background: 'var(--brutal-yellow)' }}
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1 }}
+            />
+          </div>
+
+          <p
+            className="text-xs font-semibold tracking-[0.2em] uppercase"
+            style={{ color: 'var(--brutal-text-muted)' }}
+          >
+            INITIALIZING {Math.round(progress)}%
+          </p>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

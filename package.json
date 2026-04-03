@@ -5,24 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:prod": "NODE_ENV=production vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "validate": "bash validate.sh"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@gsap/react": "^2.1.2",
     "@tailwindcss/vite": "^4.2.2",
-    "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
-    "gsap": "^3.14.2",
     "lucide-react": "^1.7.0",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
     "three": "^0.183.2"
   },
@@ -42,8 +36,5 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.1"
-  },
-  "description": "Neo-brutalist portfolio for Mark Anthony Tantongco — AI Creative Technologist",
-  "author": "Mark Anthony Tantongco",
-  "license": "MIT"
+  }
 }

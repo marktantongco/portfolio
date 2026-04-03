@@ -1,132 +1,129 @@
+import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Compass, Zap, RefreshCw } from 'lucide-react';
-import { processSteps } from '@/lib/data';
+import { EASE_SPRING, DURATION, STAGGER } from '@/lib/motion';
 
-const iconMap: Record<string, React.FC<{ size?: number; className?: string }>> = {
-  Search, Compass, Zap, RefreshCw,
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: -30 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
-};
+const steps = [
+  {
+    number: '01',
+    title: 'DISCOVER',
+    description:
+      'Deep-dive into the problem space. Research users, audit existing systems, and define clear success metrics before writing a single line of code.',
+    accent: 'var(--brutal-cyan)',
+  },
+  {
+    number: '02',
+    title: 'DESIGN',
+    description:
+      'Translate insights into wireframes, prototypes, and design systems. Every pixel is intentional, every interaction is choreographed.',
+    accent: 'var(--brutal-yellow)',
+  },
+  {
+    number: '03',
+    title: 'DEVELOP',
+    description:
+      'Build with precision. Clean architecture, performant code, and relentless attention to detail. Ship fast without cutting corners.',
+    accent: 'var(--brutal-magenta)',
+  },
+  {
+    number: '04',
+    title: 'DEPLOY',
+    description:
+      'Launch, measure, and iterate. Continuous monitoring, A/B testing, and data-driven optimization ensure lasting impact.',
+    accent: 'var(--brutal-green)',
+  },
+];
 
 export default function Process() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(timelineRef, { once: true, margin: '-70px 0px -40px 0px' });
 
   return (
     <section
       id="process"
-      ref={sectionRef}
-      className="py-24 md:py-32 lg:py-40 px-6 relative"
-      style={{
-        backgroundImage: 'radial-gradient(circle at 1px 1px, var(--brutal-text-muted) 1px, transparent 1px)',
-        backgroundSize: '20px 20px',
-        backgroundOpacity: 0.05,
-      }}
+      className="py-24 md:py-32 lg:py-40 px-6 relative z-10"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <motion.h2
-            className="section-h2 mb-4"
-            style={{ color: 'var(--brutal-border)' }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: DURATION.enter, ease: EASE_SPRING }}
+        >
+          <p
+            className="text-xs font-semibold tracking-[0.2em] uppercase mb-4"
+            style={{ color: 'var(--brutal-yellow)' }}
+          >
+            // PROCESS
+          </p>
+          <h2
+            className="font-black uppercase tracking-tight mb-4"
+            style={{
+              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+              color: 'var(--brutal-border)',
+            }}
           >
             THE SCAFFOLD METHOD
-          </motion.h2>
-          <motion.p
-            className="label-text"
-            style={{ color: 'var(--brutal-text-muted)' }}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+          </h2>
+          <p
+            className="text-base max-w-2xl mb-16"
+            style={{ color: 'var(--brutal-text-muted)', lineHeight: 1.7 }}
           >
-            A physics-first approach to creative problem-solving.
-          </motion.p>
-        </div>
-
-        {/* Steps */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {processSteps.map((step, i) => {
-            const Icon = iconMap[step.icon] || Search;
-            return (
-              <motion.div
-                key={step.name}
-                variants={itemVariants}
-                className="relative p-6"
-                style={{
-                  background: 'var(--brutal-surface)',
-                  border: 'var(--border-thick)',
-                  boxShadow: 'var(--shadow-brutal)',
-                }}
-              >
-                {/* Accent bar */}
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-1"
-                  style={{ background: step.accent }}
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: i * 0.15 }}
-                />
-
-                {/* Step number + diamond indicator */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div
-                    className="w-4 h-4 flex-shrink-0"
-                    style={{
-                      background: step.accent,
-                      transform: 'rotate(45deg)',
-                    }}
-                  />
-                  <span className="label-text" style={{ color: 'var(--brutal-text-muted)' }}>
-                    STEP {step.step}
-                  </span>
-                </div>
-
-                {/* Icon */}
-                <div className="mb-4">
-                  <Icon size={28} style={{ color: step.accent }} />
-                </div>
-
-                {/* Title */}
-                <h3 className="subheading-h3 mb-3" style={{ color: 'var(--brutal-border)' }}>
-                  {step.name}
-                </h3>
-
-                {/* Description */}
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--brutal-text-muted)' }}>
-                  {step.description}
-                </p>
-
-                {/* Dashed connector (desktop only) */}
-                {i < processSteps.length - 1 && (
-                  <div
-                    className="hidden lg:block absolute top-1/2 -right-3 w-6"
-                    style={{ borderTop: '2px dashed var(--brutal-border)', opacity: 0.3 }}
-                    aria-hidden="true"
-                  />
-                )}
-              </motion.div>
-            );
-          })}
+            A systematic approach to building digital products that are
+            structurally sound and visually striking.
+          </p>
         </motion.div>
+
+        <div ref={timelineRef} className="relative">
+          {/* Vertical line — replaces GSAP ScrollTrigger */}
+          <motion.div
+            className="absolute left-[23px] md:left-[31px] top-0 bottom-0 w-0.5 origin-top"
+            style={{ background: 'var(--brutal-yellow)' }}
+            initial={{ scaleY: 0 }}
+            animate={isInView ? { scaleY: 1 } : { scaleY: 0 }}
+            transition={{ duration: 1.2, ease: EASE_SPRING }}
+          />
+
+          <div className="space-y-12">
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.number}
+                className="flex gap-6 md:gap-8 items-start"
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: DURATION.enter, delay: i * STAGGER.items, ease: EASE_SPRING }}
+              >
+                {/* Number circle */}
+                <div
+                  className="flex-shrink-0 w-12 h-12 md:w-16 md:h-16 flex items-center justify-center font-black text-sm md:text-base"
+                  style={{
+                    background: step.accent,
+                    color: 'var(--brutal-void)',
+                    border: 'var(--border-thick)',
+                  }}
+                >
+                  {step.number}
+                </div>
+
+                {/* Content */}
+                <div className="brutal-card p-6 flex-1">
+                  <h3
+                    className="font-bold text-sm md:text-base tracking-[0.1em] uppercase mb-3"
+                    style={{ color: step.accent }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: 'var(--brutal-text-muted)' }}
+                  >
+                    {step.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

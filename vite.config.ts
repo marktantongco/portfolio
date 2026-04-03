@@ -15,19 +15,23 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('three')) {
-            return 'hero';
-          }
-          if (id.includes('framer-motion')) {
-            return 'framer-motion';
-          }
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'vendor';
-          }
+          // Three.js: always lazy-loaded, keep separate
+          if (id.includes('three')) return 'hero';
+          // Framer Motion: shared by many components
+          if (id.includes('framer-motion')) return 'framer-motion';
+          // React + ReactDOM: framework core
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) return 'vendor';
+          // Prism: code highlighting — only in CodeShowcase
+          if (id.includes('prism-react-renderer')) return 'prism';
+          // Sonner: toast notifications — only in Contact
+          if (id.includes('sonner')) return 'sonner';
         },
       },
     },
     target: 'es2020',
+    cssMinify: true,
     sourcemap: false,
+    // Increase chunk size warning limit for Three.js
+    chunkSizeWarningLimit: 600,
   },
 })
