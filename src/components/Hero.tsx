@@ -1,221 +1,264 @@
-import { useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { useGSAP } from '@gsap/react';
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
 import { gsap } from '@/lib/gsap-setup';
-import { useThreeScene } from '@/hooks/useThreeScene';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import HeroSkeleton from './HeroSkeleton';
 
-const taglines = [
-  'Building at the intersection of AI and design.',
-  'Forging brands with prompt engineering.',
-  'Cinematic vision meets raw code.',
-];
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%';
+
+function scramble(el: HTMLElement, finalText: string, duration = 800) {
+  const chars = finalText.split('');
+  const len = chars.length;
+  let frame = 0;
+  const total = Math.floor(duration / 30);
+
+  const interval = setInterval(() => {
+    frame++;
+    let result = '';
+    for (let i = 0; i < len; i++) {
+      if (chars[i] === ' ') {
+        result += ' ';
+      } else if (frame > total - (len - i) * 1.5) {
+        result += chars[i];
+      } else {
+        result += CHARS[Math.floor(Math.random() * CHARS.length)];
+      }
+    }
+    el.textContent = result;
+    if (frame >= total) {
+      clearInterval(interval);
+      el.textContent = finalText;
+    }
+  }, 30);
+
+  return interval;
+}
 
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-  const [taglineIndex, setTaglineIndex] = useState(0);
-  const [displayText, setDisplayText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Three.js scene
-  useThreeScene(canvasRef);
-
-  // GSAP cinematic entrance timeline
-  useGSAP(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-    // Name clip-path reveal (mask wipe left to right)
-    tl.from('.hero-name', {
-      clipPath: 'inset(0 100% 0 0)',
-      duration: 1.2,
-      ease: 'expo.inOut',
-    });
-
-    // Subheadline types in with character-like stagger
-    tl.from('.hero-subtitle', {
-      y: 40,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power3.out',
-    }, '-=0.6');
-
-    // Current Focus block slides in from right with rotation
-    tl.from('.hero-focus', {
-      x: 80,
-      rotation: 3,
-      opacity: 0,
-      duration: 0.7,
-      ease: 'back.out(1.2)',
-    }, '-=0.5');
-
-    // Typewriter container fades in
-    tl.from('.hero-typewriter', {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-    }, '-=0.3');
-
-    // CTA area (scroll indicator) bobs in
-    tl.from('.hero-scroll', {
-      opacity: 0,
-      scale: 0.8,
-      duration: 0.5,
-      ease: 'back.out(1.4)',
-    }, '-=0.2');
-
-    // Continuous scroll indicator bob
-    gsap.to('.hero-scroll', {
-      y: 8,
-      duration: 1.5,
-      ease: 'power1.inOut',
-      yoyo: true,
-      repeat: -1,
-    });
-  }, { scope: containerRef });
-
-  // Typewriter effect
+  // Three.js particle field
   useEffect(() => {
-    if (prefersReducedMotion) {
-      setDisplayText(taglines[0]);
+    const container = canvasRef.current;
+    if (!container) return;
+
+    const isMobile = window.innerWidth < 768;
+    const count = isMobile ? 800 : 3000;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 3;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    // Particles
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+
+    const neonColor = new THREE.Color(0xccff00);
+    const cyanColor = new THREE.Color(0x00ffff);
+
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 12;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+
+      const mix = Math.random();
+      const c = neonColor.clone().lerp(cyanColor, mix);
+      colors[i * 3] = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: isMobile ? 0.025 : 0.018,
+      vertexColors: true,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      opacity: 0.8,
+      depthWrite: false,
+    });
+
+    const points = new THREE.Points(geometry, material);
+    scene.add(points);
+
+    // Mouse tracking
+    const mouse = { x: 0, y: 0 };
+    const target = { x: 0, y: 0 };
+
+    const onMouseMove = (e: MouseEvent) => {
+      target.x = (e.clientX / window.innerWidth - 0.5) * 2;
+      target.y = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    window.addEventListener('mousemove', onMouseMove);
+
+    let animId = 0;
+    const animate = () => {
+      mouse.x += (target.x - mouse.x) * 0.05;
+      mouse.y += (target.y - mouse.y) * 0.05;
+
+      points.rotation.y += 0.0008;
+      points.rotation.x += 0.0003;
+      camera.rotation.y = mouse.x * 0.15;
+      camera.rotation.x = -mouse.y * 0.1;
+
+      renderer.render(scene, camera);
+      animId = requestAnimationFrame(animate);
+    };
+    animate();
+
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(animId);
+      renderer.dispose();
+      geometry.dispose();
+      material.dispose();
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+    };
+  }, [reduced]);
+
+  // GSAP entrance timeline
+  useEffect(() => {
+    if (reduced) {
+      // Just show everything immediately
+      gsap.set('.hero-badge, .hero-name, .hero-sub, .hero-tagline, .scroll-indicator, .corner, .side-l, .side-r, .hero-glow, .scanline', {
+        opacity: 1,
+        clearProps: 'opacity',
+      });
       return;
     }
 
-    const current = taglines[taglineIndex];
-    let timeout: ReturnType<typeof setTimeout>;
+    const tl = gsap.timeline({ delay: 2.2 });
+    tlRef.current = tl;
 
-    if (!isDeleting && displayText === current) {
-      timeout = setTimeout(() => setIsDeleting(true), 2000);
-    } else if (isDeleting && displayText === '') {
-      setIsDeleting(false);
-      setTaglineIndex((prev) => (prev + 1) % taglines.length);
-    } else {
-      timeout = setTimeout(() => {
-        if (isDeleting) {
-          setDisplayText(current.substring(0, displayText.length - 1));
-        } else {
-          setDisplayText(current.substring(0, displayText.length + 1));
-        }
-      }, isDeleting ? 30 : 60);
-    }
+    // Ambient glows
+    tl.to('.hero-glow', { opacity: 1, duration: 1.5, stagger: 0.3 }, 0);
 
-    return () => clearTimeout(timeout);
-  }, [displayText, isDeleting, taglineIndex, prefersReducedMotion]);
+    // Corners
+    tl.to('.corner', { opacity: 1, duration: 0.4, stagger: 0.1 }, 0.2);
 
-  // If reduced motion, show skeleton
-  if (prefersReducedMotion) {
-    return <HeroSkeleton />;
-  }
+    // Side lines
+    tl.to('.side-l, .side-r', { height: 120, duration: 0.8, stagger: 0.2 }, 0.4);
+
+    // Scanline
+    tl.to('.scanline', { opacity: 1, duration: 0.6 }, 0.5);
+
+    // Badge
+    tl.to('.hero-badge', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.6);
+
+    // Name with scramble
+    tl.to('.hero-name', { opacity: 1, duration: 0.01 }, 1.0);
+    tl.add(() => {
+      const mark = document.getElementById('name-mark');
+      const tantongco = document.getElementById('name-tantongco');
+      if (mark) scramble(mark, 'MARK ANTHONY', 1000);
+      if (tantongco) scramble(tantongco, 'TANTONGCO', 1000);
+    }, 1.0);
+
+    // Subtitle
+    tl.to('.hero-sub', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 1.6);
+
+    // Tagline
+    tl.to('.hero-tagline', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 1.9);
+
+    // Scroll indicator
+    tl.to('.scroll-indicator', { opacity: 1, duration: 0.6 }, 2.2);
+
+    return () => {
+      tl.kill();
+    };
+  }, [reduced]);
+
+  // Parallax on scroll
+  useEffect(() => {
+    if (reduced) return;
+    const hero = document.querySelector('.hero-parallax');
+    if (!hero) return;
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const pct = y / window.innerHeight;
+      const opacity = Math.max(0, 1 - pct * 1.5);
+      const translateY = y * 0.3;
+      gsap.set(hero, { y: translateY, opacity });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [reduced]);
+
+  const scrollToIdentity = () => {
+    document.getElementById('identity')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <section
-      id="hero"
-      ref={containerRef}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
-    >
-      {/* Three.js Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ zIndex: 0, touchAction: 'pan-y' }}
-        aria-hidden="true"
-      />
+    <section id="hero">
+      <div id="hero-3d" ref={canvasRef} />
 
-      {/* Scanlines */}
-      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }} aria-hidden="true">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="absolute h-px w-full"
-            style={{
-              background: 'var(--brutal-yellow)',
-              opacity: 0.03,
-              top: `${33 + i * 33}%`,
-              animation: `scan-line ${4 + i}s linear infinite`,
-              animationDelay: `${i * 1.5}s`,
-            }}
-          />
-        ))}
+      {/* Overlay layers */}
+      <div className="hero-glow g1" />
+      <div className="hero-glow g2" />
+      <div className="hero-grid" />
+      <div className="hero-grad" />
+      <div className="vignette" />
+      <div className="scanline" />
+
+      {/* Corners */}
+      <div className="corners">
+        <div className="corner tl" />
+        <div className="corner tr" />
+        <div className="corner bl" />
+        <div className="corner br" />
       </div>
 
-      {/* Text overlay */}
-      <div className="relative z-10 text-center px-6 pointer-events-none">
-        {/* Name */}
-        <h1
-          className="hero-name display-h1 mb-4"
-          style={{ color: 'var(--brutal-border)' }}
-        >
-          MARK ANTHONY<br />TANTONGCO
+      {/* Side lines */}
+      <div className="side-l" />
+      <div className="side-r" />
+
+      {/* Content */}
+      <div className="hero-content hero-parallax">
+        <div className="hero-badge">
+          <span className="badge-dot" />
+          <span className="badge-text">DEUS ACTIVE · Available for Projects</span>
+        </div>
+
+        <h1 className="hero-name">
+          <span id="name-mark">MARK ANTHONY</span>
+          <span className="line-neon" id="name-tantongco">TANTONGCO</span>
         </h1>
 
-        {/* Headline */}
-        <p
-          className="hero-subtitle label-text mb-8"
-          style={{ color: 'var(--brutal-yellow)', opacity: 0 }}
-        >
-          AI Creative Strategist | Prompt Architect | Cinematic Vision
-        </p>
+        <p className="hero-sub">AI Creative Technologist · Building Sentient Systems</p>
 
-        {/* Current Focus block */}
-        <div
-          className="hero-focus inline-block p-4 mb-8 text-left"
-          style={{ background: 'var(--brutal-surface)', border: 'var(--border-thin)', opacity: 0 }}
-        >
-          <span className="label-text block mb-2" style={{ color: 'var(--brutal-text-muted)' }}>CURRENT FOCUS</span>
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="w-2 h-2 inline-block" style={{ background: 'var(--brutal-green)' }} />
-              <span style={{ color: 'var(--brutal-border)' }}>Deepening AI image enhancement workflows</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="w-2 h-2 inline-block" style={{ background: 'var(--brutal-cyan)' }} />
-              <span style={{ color: 'var(--brutal-border)' }}>Building powerUP Brand Runtime</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="w-2 h-2 inline-block" style={{ background: 'var(--brutal-magenta)' }} />
-              <span style={{ color: 'var(--brutal-border)' }}>Refining SEO/GEO optimization frameworks</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Typewriter */}
-        <div className="hero-typewriter mb-8" style={{ opacity: 0 }}>
-          <p className="text-lg md:text-2xl font-light italic" style={{ color: 'var(--brutal-text-muted)' }}>
-            {displayText}
-            <span className="inline-block w-0.5 h-5 ml-1" style={{ background: 'var(--brutal-yellow)', animation: 'pulse-dot 1s ease-in-out infinite' }} />
-          </p>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="hero-scroll flex flex-col items-center gap-2" style={{ opacity: 0 }}>
-          <span className="label-text" style={{ color: 'var(--brutal-text-muted)' }}>SCROLL</span>
-          <ChevronDown size={20} style={{ color: 'var(--brutal-text-muted)' }} />
+        <div className="hero-tagline">
+          <div className="shadow-block" />
+          <span className="inner">View Case Studies ↓</span>
         </div>
       </div>
 
-      {/* Marquee ticker */}
-      <div
-        className="absolute bottom-0 left-0 right-0 overflow-hidden py-3"
-        style={{
-          background: 'var(--brutal-void)',
-          borderTop: 'var(--border-thin)',
-          borderBottom: 'var(--border-thin)',
-          zIndex: 10,
-        }}
-        aria-hidden="true"
-      >
-        <div
-          className="flex whitespace-nowrap"
-          style={{ animation: 'marquee 20s linear infinite' }}
-        >
-          {[0, 1].map((dup) => (
-            <span key={dup} className="label-text mx-4" style={{ color: 'var(--brutal-text-muted)' }}>
-              AI Image Generation · Prompt Engineering · Digital Branding · WebGPU · React · Next.js · Midjourney · Flux · SDXL · ComfyUI · Brand Strategy · Cinematic Vision · Prompt Architecture · Design Systems · GEO Optimization &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            </span>
-          ))}
+      {/* Scroll indicator */}
+      <div className="scroll-indicator" onClick={scrollToIdentity}>
+        <div className="scroll-mouse">
+          <div className="scroll-dot" />
         </div>
+        <span>Scroll</span>
       </div>
     </section>
   );

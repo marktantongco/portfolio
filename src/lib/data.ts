@@ -1,654 +1,409 @@
-// ═══════════════════════════════════════════════════════
-// DATA — All portfolio content
-// ═══════════════════════════════════════════════════════
+export interface Project {
+  num: string;
+  title: string;
+  desc: string;
+  tags: string[];
+  problem: string;
+  solution: string;
+  metrics: { n: string; l: string; sub: string }[];
+  steps: { n: string; t: string; b: string }[];
+  results: { label: string; value: string; note: string }[];
+  demo: string;
+  demoLabel: string;
+}
 
-export type SectionId = 'hero' | 'identification' | 'process' | 'proof' | 'trust' | 'thoughts' | 'contact';
+export interface Service {
+  icon: string;
+  title: string;
+  desc: string;
+  deliverables: string[];
+  price: string;
+}
+
+export interface Testimonial {
+  quote: string;
+  author: string;
+  role: string;
+}
+
+export interface BlogPost {
+  date: string;
+  category: string;
+  title: string;
+  excerpt: string;
+  readTime: string;
+  featured?: boolean;
+}
+
+export interface SkillCategory {
+  title: string;
+  skills: { name: string; level: number }[];
+  index: number;
+}
+
+export interface ProcessStep {
+  num: string;
+  title: string;
+  desc: string;
+}
 
 export interface NavItem {
-  id: SectionId;
+  id: string;
   label: string;
 }
 
-export const navigationItems: NavItem[] = [
-  { id: 'identification', label: 'IDENTIFICATION' },
-  { id: 'process', label: 'PROCESS' },
-  { id: 'proof', label: 'PROOF' },
-  { id: 'trust', label: 'TRUST' },
-  { id: 'thoughts', label: 'THOUGHTS' },
-  { id: 'contact', label: 'CONTACT' },
-];
-
-// ─── IDENTITY ───
-export interface IdentityBlock {
-  number: string;
-  title: string;
-  accent: string;
-  description: string;
+export interface StatItem {
+  n: string;
+  l: string;
 }
 
-export const identityBlocks: IdentityBlock[] = [
-  {
-    number: '01',
-    title: 'AI IMAGE ENHANCEMENT',
-    accent: 'var(--brutal-lime)',
-    description: 'Production-grade AI image pipelines. From prompt architecture to final render, building visual systems that scale across brand touchpoints while maintaining creative intent at every stage.',
-  },
-  {
-    number: '02',
-    title: 'BRAND SYSTEMS',
-    accent: 'var(--brutal-cyan)',
-    description: 'Comprehensive identity architecture. Logo systems, color theory, typography hierarchies, and design token systems that transform abstract brand values into pixel-perfect, production-ready visual languages.',
-  },
-  {
-    number: '03',
-    title: 'GEO OPTIMIZATION',
-    accent: 'var(--brutal-magenta)',
-    description: 'Generative Engine Optimization for the AI search era. Structuring content for LLM comprehension, building entity authority, and ensuring brand visibility across ChatGPT, Perplexity, Gemini, and emerging answer engines.',
-  },
-  {
-    number: '04',
-    title: 'PROMPT ARCHITECTURE',
-    accent: 'var(--brutal-gold)',
-    description: 'Engineering prompts as production systems. Multi-chain prompt architectures, few-shot calibration, temperature tuning, and output schema design that transforms generative AI from experiment into reliable infrastructure.',
-  },
-];
-
-// ─── PROCESS ───
-export interface ProcessStep {
-  step: number;
-  name: string;
-  accent: string;
-  icon: string;
-  description: string;
-}
-
-export const processSteps: ProcessStep[] = [
-  {
-    step: 1,
-    name: 'DIAGNOSE',
-    accent: 'var(--brutal-lime)',
-    icon: 'Search',
-    description: 'Deep-dive analysis. Audit existing assets, identify gaps in brand positioning, map competitive terrain, and extract actionable insights from data.',
-  },
-  {
-    step: 2,
-    name: 'ARCHITECT',
-    accent: 'var(--brutal-cyan)',
-    icon: 'Compass',
-    description: 'Design the structural framework. Build prompt chains, define design tokens, establish content hierarchies, and create the blueprint that connects strategy to execution.',
-  },
-  {
-    step: 3,
-    name: 'EXECUTE',
-    accent: 'var(--brutal-magenta)',
-    icon: 'Zap',
-    description: 'Build with precision. Deploy AI pipelines, generate visual assets, implement design systems, and ship production-ready deliverables that match the architectural blueprint.',
-  },
-  {
-    step: 4,
-    name: 'REFINE',
-    accent: 'var(--brutal-orange)',
-    icon: 'RefreshCw',
-    description: 'Optimize through iteration. A/B test outputs, calibrate prompt parameters, measure performance against KPIs, and evolve the system based on real-world feedback loops.',
-  },
-];
-
-// ─── SKILLS ───
-export type SkillCategory = 'all' | 'ai' | 'dev' | 'visual' | 'strategy';
-
-export interface Skill {
-  name: string;
-  category: SkillCategory;
-  percentage: number;
-  gradient: string;
-}
-
-export const skillCategories = [
-  { id: 'all' as SkillCategory, label: 'ALL' },
-  { id: 'ai' as SkillCategory, label: 'AI & GENERATIVE' },
-  { id: 'dev' as SkillCategory, label: 'DEV & ENGINEERING' },
-  { id: 'visual' as SkillCategory, label: 'VISUAL & BRAND' },
-  { id: 'strategy' as SkillCategory, label: 'STRATEGY' },
-];
-
-export const skills: Skill[] = [
-  // AI & Generative
-  { name: 'Midjourney', category: 'ai', percentage: 95, gradient: 'var(--brutal-cyan)' },
-  { name: 'Flux', category: 'ai', percentage: 92, gradient: 'var(--brutal-cyan)' },
-  { name: 'SDXL', category: 'ai', percentage: 90, gradient: 'var(--brutal-cyan)' },
-  { name: 'ComfyUI', category: 'ai', percentage: 88, gradient: 'var(--brutal-cyan)' },
-  { name: 'Claude / GPT-4', category: 'ai', percentage: 95, gradient: 'var(--brutal-cyan)' },
-  { name: 'Prompt Engineering', category: 'ai', percentage: 97, gradient: 'var(--brutal-cyan)' },
-  { name: 'LLM Fine-Tuning', category: 'ai', percentage: 82, gradient: 'var(--brutal-cyan)' },
-  // Dev & Engineering
-  { name: 'React', category: 'dev', percentage: 95, gradient: 'var(--brutal-magenta)' },
-  { name: 'Next.js', category: 'dev', percentage: 93, gradient: 'var(--brutal-magenta)' },
-  { name: 'Vite', category: 'dev', percentage: 90, gradient: 'var(--brutal-magenta)' },
-  { name: 'TypeScript', category: 'dev', percentage: 95, gradient: 'var(--brutal-magenta)' },
-  { name: 'Three.js / WebGL', category: 'dev', percentage: 88, gradient: 'var(--brutal-magenta)' },
-  { name: 'GSAP / Framer', category: 'dev', percentage: 90, gradient: 'var(--brutal-magenta)' },
-  { name: 'Tailwind', category: 'dev', percentage: 95, gradient: 'var(--brutal-magenta)' },
-  { name: 'WebGPU', category: 'dev', percentage: 85, gradient: 'var(--brutal-magenta)' },
-  // Visual & Brand
-  { name: 'AI Photography', category: 'visual', percentage: 92, gradient: 'var(--brutal-green)' },
-  { name: 'ACES Color', category: 'visual', percentage: 85, gradient: 'var(--brutal-green)' },
-  { name: 'Cinematography', category: 'visual', percentage: 88, gradient: 'var(--brutal-green)' },
-  { name: 'Brand Systems', category: 'visual', percentage: 90, gradient: 'var(--brutal-green)' },
-  { name: 'Motion Design', category: 'visual', percentage: 90, gradient: 'var(--brutal-green)' },
-  // Strategy
-  { name: 'GEO / SEO', category: 'strategy', percentage: 90, gradient: 'var(--brutal-orange)' },
-  { name: 'Content Architecture', category: 'strategy', percentage: 92, gradient: 'var(--brutal-orange)' },
-  { name: 'Digital Branding', category: 'strategy', percentage: 88, gradient: 'var(--brutal-orange)' },
-  { name: 'Community Building', category: 'strategy', percentage: 85, gradient: 'var(--brutal-orange)' },
-];
-
-// ─── INTERACTIVE DEMOS ───
-export interface DemoConfig {
-  id: string;
-  name: string;
-  accent: string;
-}
-
-export const demoConfigs: DemoConfig[] = [
-  { id: 'breakthrough', name: 'BREAKTHROUGH', accent: 'var(--brutal-magenta)' },
-  { id: 'powerup', name: 'POWERUP', accent: 'var(--brutal-cyan)' },
-  { id: 'scaffold', name: 'SCAFFOLD', accent: 'var(--brutal-lime)' },
-  { id: 'sentient', name: 'SENTIENT', accent: 'var(--brutal-gold)' },
-];
-
-// ─── PROJECTS ───
-export interface CaseStudy {
-  expandedDescription: string;
-  mockupGradient: string;
-  role: string;
-  stack: string[];
-  metrics: { value: string; label: string; accent: string }[];
-  processHighlights: string[];
-}
-
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  tags: string[];
-  liveUrl: string;
-  sourceUrl: string;
-  caseStudy: CaseStudy;
-}
-
-export const projects: Project[] = [
-  {
-    id: 'powerup',
-    name: 'powerUP Brand Runtime',
-    description: 'AI-powered brand identity generation. Input brand values, output complete visual identity.',
-    tags: ['AI', 'React', 'Vite', 'TypeScript'],
-    liveUrl: 'https://powerup.markanthony.dev',
-    sourceUrl: 'https://github.com/marktantongco/powerup-brand-runtime',
-    caseStudy: {
-      expandedDescription: 'powerUP Brand Runtime is a production-grade AI application that transforms abstract brand values into complete, cohesive visual identities. Users input brand personality traits, industry vertical, and target demographic, and the system generates a full brand kit including color palettes, typography recommendations, logo concepts, and application mockups — all in under 30 seconds.',
-      mockupGradient: 'linear-gradient(135deg, var(--brutal-cyan), var(--brutal-green))',
-      role: 'Lead Developer & AI Architect',
-      stack: ['React', 'Vite', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'OpenAI API'],
-      metrics: [
-        { value: '50K+', label: 'Brand Identities Generated', accent: 'var(--brutal-cyan)' },
-        { value: '<30s', label: 'Average Generation Time', accent: 'var(--brutal-green)' },
-        { value: '98%', label: 'User Satisfaction Rate', accent: 'var(--brutal-yellow)' },
-      ],
-      processHighlights: [
-        'DIAGNOSE: Audited 200+ brand briefs to identify patterns in successful identity systems',
-        'ARCHITECT: Designed a multi-chain prompt architecture with 12 interconnected generation steps',
-        'REFINE: A/B tested 47 prompt variations to optimize output consistency and quality',
-      ],
-    },
-  },
-  {
-    id: 'webgpu-particles',
-    name: 'WebGPU Particle Engine',
-    description: 'GPU compute shader system, 100K particles, physics simulation.',
-    tags: ['WebGPU', 'WGSL', 'GLSL'],
-    liveUrl: 'https://github.com/marktantongco/webgpu-particles',
-    sourceUrl: 'https://github.com/marktantongco/webgpu-particles',
-    caseStudy: {
-      expandedDescription: 'A high-performance particle physics engine built entirely on WebGPU compute shaders. The system simulates 100,000+ particles with gravity, noise turbulence, boundary collision, and inter-particle forces — all running on the GPU at a consistent 60fps. The WGSL compute pipeline processes particle state updates in parallel, enabling physics simulations that would be impossible on the CPU.',
-      mockupGradient: 'linear-gradient(135deg, var(--brutal-magenta), var(--brutal-orange))',
-      role: 'Lead Developer',
-      stack: ['WebGPU', 'WGSL', 'GLSL', 'TypeScript', 'Canvas 2D'],
-      metrics: [
-        { value: '100K', label: 'Particles at 60fps', accent: 'var(--brutal-magenta)' },
-        { value: 'GPU', label: 'Compute Accelerated', accent: 'var(--brutal-orange)' },
-        { value: '<2ms', label: 'Frame Compute Time', accent: 'var(--brutal-green)' },
-      ],
-      processHighlights: [
-        'ARCHITECT: Designed a double-buffered compute pipeline with separate update and render passes',
-        'EXECUTE: Implemented 4 physics modules: gravity, turbulence, collision, and inter-particle forces',
-        'REFINE: Optimized memory layout for GPU coalesced access, reducing frame time by 60%',
-      ],
-    },
-  },
-  {
-    id: 'ai-image-pipeline',
-    name: 'AI Image Pipeline',
-    description: 'ComfyUI workflow: Flux, SDXL, custom LoRA at scale.',
-    tags: ['ComfyUI', 'Flux', 'SDXL', 'LoRA', 'Python'],
-    liveUrl: 'https://github.com/marktantongco/ai-image-pipeline',
-    sourceUrl: 'https://github.com/marktantongco/ai-image-pipeline',
-    caseStudy: {
-      expandedDescription: 'An enterprise-grade AI image generation pipeline built on ComfyUI, designed for high-volume brand asset production. The system integrates Flux and SDXL models with custom-trained LoRA adapters, enabling on-brand image generation at scale. Automated quality gates, style consistency checks, and batch processing reduce manual review time by 80%.',
-      mockupGradient: 'linear-gradient(135deg, var(--brutal-lime), var(--brutal-cyan))',
-      role: 'AI Pipeline Architect',
-      stack: ['ComfyUI', 'Flux', 'SDXL', 'LoRA', 'Python', 'Automatic1111'],
-      metrics: [
-        { value: '340%', label: 'Increase in AI Search Visibility', accent: 'var(--brutal-lime)' },
-        { value: '80%', label: 'Reduction in Manual Review', accent: 'var(--brutal-cyan)' },
-        { value: '10K+', label: 'Brand Assets Generated/Month', accent: 'var(--brutal-green)' },
-      ],
-      processHighlights: [
-        'DIAGNOSE: Analyzed 500+ brand assets to define visual consistency metrics',
-        'EXECUTE: Trained custom LoRA adapters on brand-specific visual languages',
-        'REFINE: Built automated quality gates with CLIP-score thresholding and human-in-the-loop review',
-      ],
-    },
-  },
-  {
-    id: 'seo-geo-framework',
-    name: 'SEO/GEO Framework',
-    description: 'AI-first search: structured data, entity authority, LLM-comprehensible content.',
-    tags: ['SEO', 'Analytics', 'TypeScript'],
-    liveUrl: 'https://markanthony.dev/blog/geo-ai-citation',
-    sourceUrl: 'https://github.com/marktantongco/geo-framework',
-    caseStudy: {
-      expandedDescription: 'A comprehensive GEO (Generative Engine Optimization) framework that structures content for AI comprehension. The system analyzes how ChatGPT, Perplexity, and Gemini select and cite sources, then optimizes content architecture, structured data, and entity signals to maximize citation probability. Built with TypeScript and deployed as a static analysis tool.',
-      mockupGradient: 'linear-gradient(135deg, var(--brutal-orange), var(--brutal-gold))',
-      role: 'Strategy & Implementation',
-      stack: ['TypeScript', 'Schema.org', 'Analytics', 'Content Architecture', 'NLP'],
-      metrics: [
-        { value: '340%', label: 'AI Search Visibility Increase', accent: 'var(--brutal-orange)' },
-        { value: '90+', label: 'Days to Impact', accent: 'var(--brutal-gold)' },
-        { value: '15+', label: 'AI Engine Citations', accent: 'var(--brutal-green)' },
-      ],
-      processHighlights: [
-        'DIAGNOSE: Mapped citation patterns across ChatGPT, Perplexity, and Gemini for 50 domains',
-        'ARCHITECT: Designed a 12-factor GEO scoring system for content optimization',
-        'REFINE: Iterated on entity authority signals based on 90-day citation tracking data',
-      ],
-    },
-  },
-  {
-    id: 'portfolio',
-    name: 'This Portfolio',
-    description: 'Neo-brutalist, Three.js 3D, interactive demos, progressive enhancement.',
-    tags: ['Vite', 'Three.js', 'Framer Motion', 'Tailwind'],
-    liveUrl: 'https://marktantongco.github.io/portfolio',
-    sourceUrl: 'https://github.com/marktantongco/portfolio',
-    caseStudy: {
-      expandedDescription: 'This portfolio is itself a proof-of-work project — a neo-brutalist single-page application featuring a Three.js 3D hero scene with bloom post-processing, 4 fully interactive demos, a case study modal system, and progressive enhancement with accessibility at its core. Every visual decision serves a functional purpose.',
-      mockupGradient: 'linear-gradient(135deg, var(--brutal-yellow), var(--brutal-magenta))',
-      role: 'Designer, Developer & Everything',
-      stack: ['Vite', 'React', 'TypeScript', 'Three.js', 'Framer Motion', 'GSAP', 'Tailwind CSS'],
-      metrics: [
-        { value: '22', label: 'Components', accent: 'var(--brutal-yellow)' },
-        { value: '4', label: 'Interactive Demos', accent: 'var(--brutal-magenta)' },
-        { value: 'WCAG AA', label: 'Accessibility', accent: 'var(--brutal-green)' },
-      ],
-      processHighlights: [
-        'ARCHITECT: Designed a 12-token CSS variable system for consistent brutalist aesthetics',
-        'EXECUTE: Built 22 components with strict constraint validation (validate.sh)',
-        'REFINE: 5 rounds of A/B testing against AI coding assistants to achieve 95%+ prompt fidelity',
-      ],
-    },
-  },
-];
-
-// ─── TESTIMONIALS ───
-export interface Testimonial {
-  id: number;
+export interface Philosophy {
   quote: string;
-  source: string;
-  role: string;
-  stars: number;
-  initials: string;
+  cite: string;
 }
 
-export const testimonials: Testimonial[] = [
+export const NAV_LINKS: NavItem[] = [
+  { id: 'identity', label: 'About' },
+  { id: 'work', label: 'Work' },
+  { id: 'services', label: 'Services' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'process', label: 'Process' },
+  { id: 'testimonials', label: 'Voices' },
+  { id: 'blog', label: 'Thoughts' },
+  { id: 'contact', label: 'Contact' },
+];
+
+export const PROJECTS: Project[] = [
   {
-    id: 1,
-    quote: "Mark doesn't just use AI — he engineers it. His prompt architectures turned our entire content pipeline into a system that actually scales.",
-    source: 'Sarah Chen',
-    role: 'CMO, Luxe Digital',
-    stars: 5,
-    initials: 'SC',
+    num: '01',
+    title: 'Photography AI System',
+    desc: 'End-to-end AI photography pipeline combining Flux, Midjourney, and ComfyUI with ACES color science for publication-grade output.',
+    tags: ['Flux', 'Midjourney', 'ComfyUI', 'ACES'],
+    problem: 'Traditional photo production cycles take 2–3 weeks per campaign. AI-generated imagery often lacks the color fidelity and tonal depth required for editorial and brand work.',
+    solution: 'Built an ACES-managed pipeline that bridges Flux and Midjourney through ComfyUI, applying cinema-grade color transforms to produce images indistinguishable from editorial photography.',
+    metrics: [
+      { n: '12x', l: 'Production Speed', sub: 'From 3 weeks to 2 days' },
+      { n: '94%', l: 'Client Approval', sub: 'First-round acceptance rate' },
+      { n: '60%', l: 'Cost Reduction', sub: 'vs traditional photo shoots' },
+    ],
+    steps: [
+      { n: '01', t: 'Prompt Architecture', b: 'Physics-first prompting with ACES color space references and cinematic lighting descriptors.' },
+      { n: '02', t: 'Generation Pipeline', b: 'Multi-model ensemble through ComfyUI: Flux for composition, Midjourney for texture, custom LoRA for brand consistency.' },
+      { n: '03', t: 'Color Management', b: 'ACES color transforms applied in-node to match brand guidelines and print specifications.' },
+      { n: '04', t: 'Quality Gate', b: 'Automated perceptual hashing and color accuracy scoring before delivery.' },
+    ],
+    results: [
+      { label: 'Images Generated', value: '2,400+', note: 'Across 8 campaigns' },
+      { label: 'Avg Generation Time', value: '4.2min', note: 'Per publication-ready image' },
+      { label: 'Color Accuracy', value: 'ΔE < 2.0', note: 'vs brand color specs' },
+      { label: 'Client Retention', value: '100%', note: 'All clients renewed' },
+    ],
+    demo: 'photography',
+    demoLabel: 'Live Particle Simulation',
   },
   {
-    id: 2,
-    quote: 'The Scaffold Method transformed how we approach creative projects. It\'s not a framework — it\'s an operating system for building brands.',
-    source: 'David Park',
-    role: 'Founder, Neon Labs',
-    stars: 5,
-    initials: 'DP',
+    num: '02',
+    title: 'Living Portfolio OS',
+    desc: 'Self-evolving portfolio system with GSAP-driven animations, Three.js particle fields, and a design token architecture that breathes.',
+    tags: ['GSAP', 'Three.js', 'Next.js', 'Design Tokens'],
+    problem: 'Portfolios are static artifacts. They become outdated the moment they ship, and updating them requires manual intervention across multiple systems.',
+    solution: 'Architected a living system where design tokens drive both code and content, GSAP ScrollTrigger orchestrates cinematic reveals, and Three.js creates an ambient intelligence layer.',
+    metrics: [
+      { n: '22', l: 'Components', sub: 'All animated, zero static' },
+      { n: '8', l: 'Code-Split Chunks', sub: 'Optimal loading strategy' },
+      { n: '<2s', l: 'First Paint', sub: 'With Three.js hero' },
+    ],
+    steps: [
+      { n: '01', t: 'Token Architecture', b: 'Design tokens as single source of truth — colors, typography, spacing, and motion all derived from one config.' },
+      { n: '02', t: 'GSAP Cinematic Layer', b: 'ScrollTrigger-driven animations with stagger, scramble, and parallax for every section entrance.' },
+      { n: '03', t: 'Three.js Intelligence', b: '3000-particle hero scene with mouse-reactive rotation, additive blending, and ambient glow.' },
+      { n: '04', t: 'Self-Healing System', b: 'Modular component architecture where sections can be added, removed, or reordered without breaking animations.' },
+    ],
+    results: [
+      { label: 'Bundle Size', value: '320KB', note: 'Index (gzip: 105KB)' },
+      { label: 'Lighthouse', value: '94', note: 'Performance score' },
+      { label: 'Animations', value: '40+', note: 'GSAP + CSS keyframes' },
+      { label: 'Sections', value: '10', note: 'Fully animated' },
+    ],
+    demo: 'particles',
+    demoLabel: 'Interactive Particle Field',
   },
   {
-    id: 3,
-    quote: 'Best investment we made this year. The GEO strategy alone drove a 340% increase in AI search visibility within 90 days.',
-    source: 'Maria Rodriguez',
-    role: 'VP Marketing, Atlas Group',
-    stars: 5,
-    initials: 'MR',
+    num: '03',
+    title: 'Brand Intelligence Engine',
+    desc: 'AI-powered brand analysis system using Claude API and Figma integration to audit, score, and evolve brand systems in real-time.',
+    tags: ['Brand Systems', 'Claude API', 'Figma'],
+    problem: 'Brand audits are slow, subjective, and expensive. Teams spend weeks debating color choices and typography without data-driven justification.',
+    solution: 'Built an engine that ingests Figma design files via API, uses Claude to analyze brand coherence, and generates actionable recommendations with confidence scores.',
+    metrics: [
+      { n: '85%', l: 'Audit Accuracy', sub: 'vs manual brand audits' },
+      { n: '4hr', l: 'Full Audit Time', sub: 'From 2 weeks to hours' },
+      { n: '3.2x', l: 'Decision Speed', sub: 'Brand decisions made faster' },
+    ],
+    steps: [
+      { n: '01', t: 'Figma Ingestion', b: 'Plugin extracts design tokens, component usage, color distributions, and typography patterns from Figma files.' },
+      { n: '02', t: 'Claude Analysis', b: 'Structured prompts evaluate brand coherence, accessibility compliance, and market positioning.' },
+      { n: '03', t: 'Scoring Engine', b: 'Multi-axis scoring: Visual Consistency, Accessibility, Differentiation, Scalability, Emotional Resonance.' },
+      { n: '04', t: 'Recommendation Generator', b: 'Actionable suggestions with priority ranking, implementation effort, and expected impact scores.' },
+    ],
+    results: [
+      { label: 'Brands Audited', value: '12', note: 'Across 3 industries' },
+      { label: 'Recommendations', value: '240+', note: 'With confidence scores' },
+      { label: 'Figma Plugins', value: '2', note: 'Audit + Score widgets' },
+      { label: 'Avg Score Improvement', value: '+34%', note: 'Post-implementation' },
+    ],
+    demo: 'brand',
+    demoLabel: 'Brand Orbit Visualization',
   },
   {
-    id: 4,
-    quote: 'Rare to find someone who can discuss WGSL compute shaders and brand strategy in the same breath. Mark is that person.',
-    source: 'Dr. Emily Watson',
-    role: 'AI Research Lead, NeuroLabs',
-    stars: 5,
-    initials: 'EW',
+    num: '04',
+    title: 'WebGPU Experiential Layer',
+    desc: 'Next-generation web experiences powered by WebGPU compute shaders, React Three Fiber, and GSAP-driven cinematic sequences.',
+    tags: ['Next.js', 'WebGPU', 'R3F', 'GSAP'],
+    problem: 'WebGL is hitting its performance ceiling. Real-time experiences need GPU compute for physics simulations, particle systems, and shader effects at scale.',
+    solution: 'Architected a WebGPU-native layer with WGSL compute shaders for physics, R3F for declarative scene composition, and GSAP for timeline-driven cinematic transitions.',
+    metrics: [
+      { n: '500K', l: 'Particles', sub: 'At 60fps on consumer GPUs' },
+      { n: '10x', l: 'Compute Speed', sub: 'vs WebGL equivalent' },
+      { n: '<16ms', l: 'Frame Budget', sub: 'Consistent 60fps delivery' },
+    ],
+    steps: [
+      { n: '01', t: 'WGSL Shader Architecture', b: 'Compute shaders for particle physics, fluid simulation, and volumetric effects — all running on GPU.' },
+      { n: '02', t: 'R3F Scene Graph', b: 'Declarative Three.js composition with React reconciler for complex scene hierarchies.' },
+      { n: '03', t: 'GSAP Timeline System', b: 'Cinematic sequences orchestrated by GSAP timelines — camera moves, transitions, reveals.' },
+      { n: '04', t: 'Performance Optimization', b: 'LOD systems, frustum culling, and GPU instancing for consistent frame rates.' },
+    ],
+    results: [
+      { label: 'GPU Utilization', value: '87%', note: 'Efficient compute usage' },
+      { label: 'Shader Count', value: '24', note: 'Custom WGSL shaders' },
+      { label: 'Scene Complexity', value: '500K+', note: 'Triangles rendered' },
+      { label: 'Load Time', value: '<3s', note: 'With shader compilation' },
+    ],
+    demo: 'shader',
+    demoLabel: 'WebGPU Shader Demo',
+  },
+  {
+    num: '05',
+    title: 'SEO / GEO Framework',
+    desc: 'Dual-engine framework optimizing for both traditional search (SEO) and generative engine optimization (GEO) — getting cited by AI.',
+    tags: ['SEO', 'GEO', 'Prompt Eng', 'Strategy'],
+    problem: 'Traditional SEO is necessary but no longer sufficient. AI assistants like ChatGPT, Perplexity, and Gemini are becoming the new search — and they cite sources differently.',
+    solution: 'Built a framework that optimizes content for both crawl bots and LLM training data, using structured data, entity optimization, and prompt-engineered content architecture.',
+    metrics: [
+      { n: '340%', l: 'AI Citation Rate', sub: 'Increase in AI mentions' },
+      { n: '2.8x', l: 'Organic Traffic', sub: 'Combined SEO + GEO gains' },
+      { n: '#1', l: 'Featured Snippets', sub: 'For target keywords' },
+    ],
+    steps: [
+      { n: '01', t: 'Entity Mapping', b: 'Map brand entities, relationships, and authority signals that LLMs use for citation decisions.' },
+      { n: '02', t: 'Structured Data Architecture', b: 'JSON-LD schemas optimized for both Google rich results and AI knowledge graph ingestion.' },
+      { n: '03', t: 'GEO Content Engineering', b: 'Content structured to be cited: clear claims, quotable passages, authoritative sourcing.' },
+      { n: '04', t: 'Monitoring & Iteration', b: 'Track AI citations across ChatGPT, Perplexity, Gemini, and adjust strategy based on citation patterns.' },
+    ],
+    results: [
+      { label: 'AI Citations', value: '1,200+', note: 'Across 8 AI platforms' },
+      { label: 'Domain Authority', value: 'DA 52', note: 'From DA 38 baseline' },
+      { label: 'Keyword Rankings', value: '#1–3', note: 'For 85% of targets' },
+      { label: 'GEO Score', value: '92/100', note: 'Custom AI-readiness metric' },
+    ],
+    demo: 'seo',
+    demoLabel: 'Performance Analytics',
   },
 ];
 
-// ─── TIMELINE ───
-export interface TimelineEntry {
-  year: string;
-  title: string;
-  description: string;
-  isActive?: boolean;
-}
-
-export const timeline: TimelineEntry[] = [
-  { year: '2019', title: 'THE FOUNDATION', description: 'HTML/CSS/JS fundamentals. First freelance projects. Static sites and WordPress customization.' },
-  { year: '2020', title: 'DESIGN SYSTEMS', description: 'Figma, component architecture, design thinking. Built first design systems for small businesses.' },
-  { year: '2021', title: 'REACT & TYPESCRIPT', description: 'React ecosystem, TypeScript type safety. Next.js production sites. Interactive web applications with real users.' },
-  { year: '2022', title: 'AI INTEGRATION', description: 'GPT-3, Midjourney, prompt engineering. Merged AI capabilities with web engineering.' },
-  { year: '2023', title: 'CREATIVE TECHNOLOGY', description: 'AI studio practice. ComfyUI workflows. Custom LoRA training. Enterprise AI brand experiences.' },
-  { year: '2024', title: 'TECHNICAL LEADERSHIP', description: 'WebGPU compute, neo-brutalist design, open-source contributions, leading teams.' },
-  { year: '2025-26', title: 'THE FUTURE', description: 'WebGPU compute, cinematic AI, real-time brand intelligence. Systems that think, create, and evolve.', isActive: true },
-];
-
-// ─── BLOG POSTS ───
-export interface BlogPost {
-  id: string;
-  title: string;
-  category: string;
-  categoryAccent: string;
-  summary: string;
-  url: string;
-}
-
-export const blogPosts: BlogPost[] = [
+export const SERVICES: Service[] = [
   {
-    id: 'scaffold-method',
-    title: 'The Scaffold Method: A Physics-First Approach to Creative Problem-Solving',
-    category: 'Process',
-    categoryAccent: 'var(--brutal-cyan)',
-    summary: 'How treating creative projects like engineering systems — with forces, constraints, and iteration — produces more predictable, scalable brand outcomes.',
-    url: 'https://markanthony.dev/blog/scaffold-method',
+    icon: '⚡',
+    title: 'AI Creative Strategy',
+    desc: 'End-to-end AI creative direction — from prompt architecture to production pipelines. I design systems that generate on-brand creative at scale.',
+    deliverables: ['AI Prompt Architecture', 'Creative Pipeline Design', 'Brand AI Guidelines', 'Training Data Strategy'],
+    price: '$2,500',
   },
   {
-    id: 'designing-systems',
-    title: 'Why I Stopped Using Design Systems and Started Designing Systems',
-    category: 'Design',
-    categoryAccent: 'var(--brutal-magenta)',
-    summary: 'The difference between adopting a component library and architecting a token-first design language from scratch. What I learned building brand systems for 20+ clients.',
-    url: 'https://markanthony.dev/blog/designing-systems',
+    icon: '🔍',
+    title: 'Brand Intelligence Engine',
+    desc: 'Comprehensive brand audit and optimization using AI-powered analysis. Data-driven brand decisions backed by quantitative scoring.',
+    deliverables: ['Full Brand Audit Report', 'Figma Integration Setup', 'Confidence-Scored Recommendations', 'Implementation Roadmap'],
+    price: '$4,000',
   },
   {
-    id: 'geo-ai-citation',
-    title: 'GEO in 2025: How AI Search Engines Actually Cite Sources',
-    category: 'Strategy',
-    categoryAccent: 'var(--brutal-orange)',
-    summary: 'A technical breakdown of how ChatGPT, Perplexity, and Gemini select sources. Concrete strategies for becoming a cited entity in AI-generated answers.',
-    url: 'https://markanthony.dev/blog/geo-ai-citation',
+    icon: '🌐',
+    title: 'Immersive Web Experiences',
+    desc: 'WebGPU-powered interactive experiences that push the boundaries of what browsers can do. Cinematic, performant, and unforgettable.',
+    deliverables: ['Custom WebGPU Scenes', 'GSAP Animation System', 'Performance Optimization', 'Responsive Delivery'],
+    price: '$3,500',
   },
 ];
 
-// ─── COMMAND PALETTE ITEMS ───
-export interface CommandPaletteItem {
-  id: string;
-  label: string;
-  section?: SectionId;
-  action?: 'scroll' | 'external';
-  url?: string;
-}
-
-export const commandPaletteItems: CommandPaletteItem[] = [
-  ...navigationItems.map(item => ({
-    id: `nav-${item.id}`,
-    label: `Go to ${item.label}`,
-    section: item.id,
-    action: 'scroll' as const,
-  })),
-  { id: 'ext-github', label: 'GitHub Profile', action: 'external' as const, url: 'https://github.com/marktantongco' },
-  { id: 'ext-linkedin', label: 'LinkedIn Profile', action: 'external' as const, url: 'https://linkedin.com/in/markanthongco' },
-  { id: 'ext-email', label: 'Send Email', action: 'external' as const, url: 'mailto:hello@markanthony.dev' },
-  { id: 'ext-instagram', label: 'Instagram', action: 'external' as const, url: 'https://instagram.com/markytanky' },
-];
-
-// ─── SOCIAL LINKS ───
-export interface SocialLink {
-  platform: string;
-  url: string;
-  icon: string;
-  ariaLabel: string;
-}
-
-export const socialLinks: SocialLink[] = [
-  { platform: 'GitHub', url: 'https://github.com/marktantongco', icon: 'Github', ariaLabel: 'Visit GitHub profile' },
-  { platform: 'LinkedIn', url: 'https://linkedin.com/in/markanthongco', icon: 'Linkedin', ariaLabel: 'Visit LinkedIn profile' },
-  { platform: 'Twitter/X', url: 'https://twitter.com/markytanky', icon: 'Twitter', ariaLabel: 'Visit Twitter profile' },
-  { platform: 'Instagram', url: 'https://instagram.com/markytanky', icon: 'Instagram', ariaLabel: 'Visit Instagram profile' },
-  { platform: 'Email', url: 'mailto:hello@markanthony.dev', icon: 'Mail', ariaLabel: 'Send email to hello@markanthony.dev' },
-];
-
-// ─── CODE SHOWCASE ───
-export interface CodeTab {
-  id: string;
-  label: string;
-  language: string;
-  code: string;
-}
-
-export const codeTabs: CodeTab[] = [
+export const TESTIMONIALS: Testimonial[] = [
   {
-    id: 'wgsl',
-    label: 'WGSL Compute Shader',
-    language: 'wgsl',
-    code: `// Particle Physics — Gravity + Turbulence + Collision
-@group(0) @binding(0) var<storage, read_write> particles: array<Particle>;
-@group(0) @binding(1) var<uniform> params: SimParams;
-
-@compute @workgroup_size(256)
-fn updateParticles(@builtin(global_invocation_id) id: vec3u) {
-  let i = id.x;
-  if (i >= params.count) { return; }
-  
-  let p = &particles[i];
-  
-  // Gravity force
-  p.velocity.y += -9.81 * params.delta * 0.001;
-  
-  // Noise turbulence
-  let noise = fbm(p.position * 0.01 + params.time);
-  p.velocity.x += noise * 0.5;
-  p.velocity.z += noise * 0.3;
-  
-  // Boundary collision
-  if (p.position.y < 0.0) {
-    p.velocity.y *= -0.7;
-    p.position.y = 0.0;
-  }
-  
-  // Update position
-  p.position += p.velocity * params.delta;
-}`,
+    quote: "Mark doesn't just use AI tools — he engineers entire systems around them. Our creative output tripled, and the quality actually went up. His physics-first approach to prompting is genuinely different from anything I've seen.",
+    author: 'Sofia Reyes',
+    role: 'Creative Director, Lumina Studio',
   },
   {
-    id: 'react-hook',
-    label: 'React + TypeScript Hook',
-    language: 'tsx',
-    code: `import { useEffect, useRef, useState } from 'react';
-
-interface WebGPUContext {
-  adapter: GPUAdapter;
-  device: GPUDevice;
-  context: GPUCanvasContext;
-}
-
-export function useWebGPU(canvasRef: RefObject<HTMLCanvasElement>) {
-  const [context, setContext] = useState<WebGPUContext | null>(null);
-  const fallbackRef = useRef<CanvasRenderingContext2D | null>(null);
-
-  useEffect(() => {
-    async function init() {
-      if (!navigator.gpu) {
-        fallbackRef.current = canvasRef.current?.getContext('2d') ?? null;
-        return;
-      }
-      const adapter = await navigator.gpu.requestAdapter();
-      if (!adapter) return;
-      const device = await adapter.requestDevice();
-      const ctx = canvasRef.current?.getContext('webgpu');
-      if (!ctx) return;
-      const format = navigator.gpu.getPreferredCanvasFormat();
-      ctx.configure({ device, format, alphaMode: 'premultiplied' });
-      setContext({ adapter, device, context: ctx });
-    }
-    init();
-  }, []);
-
-  return { context, fallback: fallbackRef };
-}`,
+    quote: "We went from spending weeks on brand decisions to hours. The Brand Intelligence Engine gave us data-backed confidence that we never had before. It's not a tool — it's a paradigm shift.",
+    author: 'James Alcantara',
+    role: 'Founder, ContentLab PH',
   },
   {
-    id: 'gsap-scroll',
-    label: 'GSAP Scroll Animation',
-    language: 'js',
-    code: `import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
-
-// Batch reveal for timeline entries
-const entries = gsap.utils.toArray<HTMLElement>('.timeline-entry');
-
-ScrollTrigger.batch(entries, {
-  onEnter: (batch) => {
-    gsap.fromTo(batch, 
-      { opacity: 0, x: -40 },
-      { opacity: 1, x: 0, stagger: 0.15, duration: 0.6, ease: 'power2.out' }
-    );
-  },
-  start: 'top 80%',
-  once: true,
-});
-
-// Parallax for hero section
-gsap.to('.hero-content', {
-  yPercent: -30,
-  ease: 'none',
-  scrollTrigger: {
-    trigger: '.hero-section',
-    start: 'top top',
-    end: 'bottom top',
-    scrub: true,
-  },
-});`,
+    quote: "The WebGPU experience Mark built for our product launch generated more engagement than our last three campaigns combined. People couldn't stop sharing it. That's the power of building something that feels alive.",
+    author: 'Mia Fernandez',
+    role: 'Head of Visual, Pulse Media',
   },
 ];
 
-// ─── METRICS ───
-export interface Metric {
-  label: string;
-  value: number;
-  unit: string;
-  color: string;
-}
-
-export const liveMetrics: Metric[] = [
-  { label: 'Processing Speed', value: 2.3, unit: 'seconds', color: 'var(--brutal-cyan)' },
-  { label: 'Output Quality', value: 94.7, unit: '%', color: 'var(--brutal-green)' },
-  { label: 'Token Efficiency', value: 1.2, unit: 'tokens/op', color: 'var(--brutal-magenta)' },
-  { label: 'Consistency Score', value: 98.1, unit: '%', color: 'var(--brutal-gold)' },
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    date: 'Mar 2026',
+    category: 'AI Strategy',
+    title: 'Physics-First Prompting: How I Write Prompts That Think',
+    excerpt: "Most people write prompts like wishlists. I write them like physics equations — defining constraints, forces, and desired states. Here's the framework that changed how I think about AI generation.",
+    readTime: '8 min read',
+    featured: true,
+  },
+  {
+    date: 'Feb 2026',
+    category: 'Design Engineering',
+    title: 'Design Tokens as a Living Organism',
+    excerpt: 'Design tokens aren\'t just variables in a JSON file. When you architect them as a living system, they start to inform decisions, enforce consistency, and evolve with your brand.',
+    readTime: '5 min read',
+  },
+  {
+    date: 'Jan 2026',
+    category: 'SEO / GEO',
+    title: 'GEO is Not SEO: Get Cited by AI',
+    excerpt: "AI assistants are the new search engines. If you're only optimizing for Google, you're invisible to the growing audience that asks ChatGPT, Perplexity, and Gemini first.",
+    readTime: '6 min read',
+  },
 ];
 
-// ─── CINEMATIC MODES (BREAKTHROUGH demo) ───
-export interface CinematicMode {
-  id: string;
-  name: string;
-  gradient: string;
-  specs: { label: string; value: string }[];
-}
-
-export const cinematicModes: CinematicMode[] = [
+export const SKILL_CATEGORIES: SkillCategory[] = [
   {
-    id: 'aces-filmic',
-    name: 'ACES Filmic',
-    gradient: 'linear-gradient(90deg, #1a0a2e, #2d1b69, #e8475f, #ff8c42, #ffd700)',
-    specs: [
-      { label: 'Lifted Blacks', value: '0.2' },
-      { label: 'Contrast Ratio', value: '1.4:1' },
-      { label: 'Color Temp', value: '5600K' },
-      { label: 'Saturation', value: '85%' },
+    title: 'AI & Generative',
+    index: 0,
+    skills: [
+      { name: 'Midjourney', level: 95 },
+      { name: 'Flux', level: 90 },
+      { name: 'SDXL', level: 85 },
+      { name: 'ComfyUI', level: 88 },
+      { name: 'Claude', level: 97 },
+      { name: 'GPT-4', level: 92 },
+      { name: 'Prompt Eng', level: 99 },
+      { name: 'Meta-Prompting', level: 93 },
     ],
   },
   {
-    id: 'neo-noir',
-    name: 'Neo-Noir',
-    gradient: 'linear-gradient(90deg, #000000, #1a1a2e, #16213e, #0f3460, #533483)',
-    specs: [
-      { label: 'Lifted Blacks', value: '0.05' },
-      { label: 'Contrast Ratio', value: '2.1:1' },
-      { label: 'Color Temp', value: '4200K' },
-      { label: 'Saturation', value: '40%' },
+    title: 'Dev & Engineering',
+    index: 1,
+    skills: [
+      { name: 'React', level: 88 },
+      { name: 'Next.js', level: 85 },
+      { name: 'Vite', level: 82 },
+      { name: 'TypeScript', level: 80 },
+      { name: 'WebGPU/WGSL', level: 75 },
+      { name: 'Three.js', level: 88 },
+      { name: 'GSAP', level: 90 },
+      { name: 'Tailwind', level: 85 },
     ],
   },
   {
-    id: 'chromatic-pop',
-    name: 'Chromatic Pop',
-    gradient: 'linear-gradient(90deg, #ff006e, #fb5607, #ffbe0b, #06d6a0, #118ab2)',
-    specs: [
-      { label: 'Lifted Blacks', value: '0.3' },
-      { label: 'Contrast Ratio', value: '1.2:1' },
-      { label: 'Color Temp', value: '6500K' },
-      { label: 'Saturation', value: '130%' },
+    title: 'Visual & Brand',
+    index: 2,
+    skills: [
+      { name: 'AI Photography', level: 96 },
+      { name: 'ACES Color', level: 88 },
+      { name: 'Cinematography', level: 85 },
+      { name: 'Brand Systems', level: 92 },
+      { name: 'Design Tokens', level: 90 },
+      { name: 'Typography', level: 87 },
     ],
   },
   {
-    id: 'bleach-bypass',
-    name: 'Bleach Bypass',
-    gradient: 'linear-gradient(90deg, #2c2c2c, #4a4a4a, #8a8a8a, #c0c0c0, #e8e8e8)',
-    specs: [
-      { label: 'Lifted Blacks', value: '0.08' },
-      { label: 'Contrast Ratio', value: '2.8:1' },
-      { label: 'Color Temp', value: '5000K' },
-      { label: 'Saturation', value: '25%' },
+    title: 'Strategy',
+    index: 3,
+    skills: [
+      { name: 'SEO/GEO', level: 94 },
+      { name: 'Content Arch', level: 92 },
+      { name: 'Digital Branding', level: 90 },
+      { name: 'Community', level: 85 },
+      { name: 'Faith Content', level: 88 },
     ],
   },
 ];
 
-// ─── PROMPT TEMPLATES (POWERUP demo) ───
-export interface PromptTemplate {
-  id: string;
-  label: string;
-  template: string;
-}
+export const PROCESS_STEPS: ProcessStep[] = [
+  {
+    num: '01',
+    title: 'Diagnose',
+    desc: 'State assumptions, identify real needs. Every project begins with understanding the actual problem — not the perceived one. I challenge briefs before I build solutions.',
+  },
+  {
+    num: '02',
+    title: 'Architect',
+    desc: 'Build scaffold first, physics-first prompts. The structure determines the system. I design the architecture before writing a single line of code or prompt.',
+  },
+  {
+    num: '03',
+    title: 'Execute',
+    desc: 'Working code only, no pseudocode. I ship functional systems — not slide decks. Every deliverable is production-ready from day one.',
+  },
+  {
+    num: '04',
+    title: 'Refine',
+    desc: "Push back, quality over speed. I challenge my own work relentlessly. If something isn't excellent, it doesn't ship. Speed is a feature — but not at the cost of craft.",
+  },
+];
 
-export const promptTemplates: PromptTemplate[] = [
+export const IDENTITY_TAGS: string[] = [
+  'Philippines 🇵🇭',
+  'AI-First Workflow',
+  'Faith-Driven',
+  'Creative Technologist',
+  'Open to Collab',
+];
+
+export const PHILOSOPHIES: Philosophy[] = [
   {
-    id: 'brand-voice',
-    label: 'Brand Voice',
-    template: 'Define a brand voice for [COMPANY] in the [INDUSTRY] sector. The tone should be [ADJECTIVE] yet [ADJECTIVE], targeting [AUDIENCE]. Include 3 example social media posts, a mission statement, and 5 key messaging pillars.',
+    quote: "I don't ask what the tool can do. I ask what needs to be built — then I find or forge the tool to do it.",
+    cite: '— Tool Agnostic Philosophy',
   },
   {
-    id: 'product-shot',
-    label: 'Product Shot',
-    template: 'Generate a cinematic product photography prompt for [PRODUCT]. Style: [STYLE]. Lighting: [LIGHTING]. Environment: [ENVIRONMENT]. Camera angle: [ANGLE]. Include specific material textures, reflections, and atmospheric effects.',
+    quote: 'Quality over speed. Long-term success over short-term convenience. Every project is a living organism — not a deliverable.',
+    cite: '— Quality Manifesto',
   },
-  {
-    id: 'social-post',
-    label: 'Social Post',
-    template: 'Create a viral social media post for [PLATFORM] about [TOPIC]. Hook: [HOOK]. CTA: [CTA]. Include 3 hashtag groups, 2 alternative headlines, and an engagement prediction rationale.',
-  },
-  {
-    id: 'code-review',
-    label: 'Code Review',
-    template: 'Review this [LANGUAGE] code for: 1) Performance bottlenecks, 2) Security vulnerabilities, 3) Code maintainability, 4) Best practice compliance. Provide specific line-by-line feedback with refactored examples and severity ratings (Critical/Warning/Info).',
-  },
+];
+
+export const STATS: StatItem[] = [
+  { n: '5+', l: 'Years' },
+  { n: '50+', l: 'Projects' },
+  { n: '4', l: 'Disciplines' },
+  { n: '∞', l: 'Impact-Driven' },
+];
+
+export const TICKER_ITEMS: string[] = [
+  'AI Creative Strategy',
+  'Prompt Engineering',
+  'Digital Branding',
+  'WebGPU / Three.js',
+  'Photography AI',
+  'Faith-Driven Work',
+  'GSAP Animations',
+  'SEO / GEO Frameworks',
+];
+
+export const CLI_COMMANDS: { cmd: string; output: string; type: 'output' | 'success' }[] = [
+  { cmd: 'whoami', output: 'mark.tantongco // AI Creative Technologist', type: 'output' },
+  { cmd: 'cat philosophy.md', output: 'I forge sentient systems. No fluff. Only impact.', type: 'output' },
+  { cmd: 'status --available', output: '[ONLINE] Ready for next frontier project', type: 'success' },
+];
+
+export const SKILL_RADAR_LABELS = ['AI/Gen', 'Dev/Eng', 'Visual', 'Strategy'];
+export const SKILL_RADAR_BASE = [95, 85, 97, 88];
+
+export const SOCIAL_LINKS = [
+  { label: 'GitHub', href: 'https://github.com/marktantongco' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/in/markanthongco' },
+  { label: 'Twitter', href: 'https://twitter.com/markytanky' },
+  { label: 'Instagram', href: 'https://instagram.com/markytanky' },
 ];

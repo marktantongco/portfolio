@@ -1,24 +1,23 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { SectionId } from '@/lib/data';
+import { useState, useEffect } from 'react';
+import { NAV_LINKS } from '@/lib/data';
 
-export function useActiveSection() {
-  const [activeSection, setActiveSection] = useState<SectionId>('hero');
+export function useActiveSection(): string {
+  const [active, setActive] = useState('identity');
 
   useEffect(() => {
-    const sectionIds: SectionId[] = ['hero', 'identification', 'process', 'proof', 'trust', 'thoughts', 'contact'];
-
+    const ids = NAV_LINKS.map((l) => l.id);
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveSection(entry.target.id as SectionId);
+            setActive(entry.target.id);
           }
         });
       },
-      { threshold: 0.3 }
+      { rootMargin: '-30% 0px -60% 0px' }
     );
 
-    sectionIds.forEach((id) => {
+    ids.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
@@ -26,14 +25,5 @@ export function useActiveSection() {
     return () => observer.disconnect();
   }, []);
 
-  const scrollToSection = useCallback((id: SectionId) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []);
-
-  return { activeSection, setActiveSection, scrollToSection } as const;
+  return active;
 }
-
-export type { SectionId };

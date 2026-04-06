@@ -5,14 +5,15 @@
 </p>
 
 <p align="center">
-  <strong>A neo-brutalist single-page portfolio.</strong><br/>
-  Zero corporate polish. Raw power. Built at the intersection of bleeding-edge AI, cinematic design, and strategic brand systems.
+  <strong>GSAP-cinematic neo-brutalist portfolio.</strong><br/>
+  Raw power at the intersection of AI, cinematic design, and strategic brand systems.<br/>
+  Three.js particle hero · CLI typewriter identity · 5 case studies with live Three.js demos · Chart.js radar skills.
 </p>
 
 <p align="center">
   <a href="https://marktantongco.github.io/portfolio/">GitHub Pages</a> ·
-  <a href="https://vercel.com/">Vercel</a> ·
-  <a href="https://github.com/marktantongco/portfolio/issues">Issues</a>
+  <a href="https://github.com/marktantongco/portfolio/issues">Issues</a> ·
+  <a href="https://github.com/marktantongco/portfolio">Source</a>
 </p>
 
 ---
@@ -23,22 +24,16 @@
 - [Live Deployments](#live-deployments)
 - [Tech Stack](#tech-stack)
 - [Design System](#design-system)
-- [Features](#features)
-  - [Interactive Demos](#4-fully-interactive-demos)
-  - [Case Study Modal](#case-study-modal-system)
-  - [4-Layer Navigation](#4-layer-navigation-system)
-  - [All Sections](#page-sections)
-- [Project Architecture](#project-architecture)
+- [Architecture](#architecture)
 - [Component Map](#component-map)
+- [Animation System](#animation-system)
 - [Data Layer](#data-layer)
+- [Page Sections](#page-sections)
 - [Development](#development)
-- [Validation](#validation--constraint-compliance)
 - [Performance](#performance-benchmarks)
-- [Progressive Enhancement](#progressive-enhancement)
 - [Accessibility](#accessibility-wcag-aa)
-- [SEO & PWA](#seo--pwa--geo)
+- [SEO & PWA & GEO](#seo--pwa--geo)
 - [Deployment](#deployment)
-- [Backup & Versioning](#backup--versioning)
 - [Design Philosophy](#design-philosophy)
 - [License](#license)
 
@@ -46,227 +41,156 @@
 
 ## Overview
 
-This is a **static single-page application** — no server, no Next.js, no database. Pure client-side rendering with progressive enhancement and cinematic Three.js 3D visuals. Every pixel serves a functional purpose defined in a 1,300+ line master specification document refined across 5 rounds of A/B testing against real AI-assisted deployments.
+A **static single-page application** built with Vite + React + TypeScript. No server, no database, no Next.js — pure client-side rendering with progressive enhancement, cinematic Three.js 3D visuals, and GSAP ScrollTrigger-driven section reveals.
 
-**Author:** Mark Anthony Tantongco — AI Creative Strategist, Prompt Architect, Cinematic Vision
+The portfolio features 10 distinct sections, 5 fully-detailed case studies with live Three.js canvas demos in a modal overlay, a CLI typewriter identity block, Chart.js radar visualization for skills, and a dark/light theme system built on CSS custom properties.
 
-**Built with:** Vite + React + TypeScript + Three.js + Framer Motion + GSAP + Tailwind CSS
+**Author:** Mark Anthony Tantongco — AI Creative Technologist, Prompt Architect, Cinematic Vision
+
+**Built with:** Vite 8 · React 19 · TypeScript 5.9 · Three.js 0.183 · GSAP 3.14 · Chart.js 4.5 · Tailwind CSS 4
 
 ---
 
 ## Live Deployments
 
-| Platform | URL | Status |
+| Platform | URL | Strategy |
 |---|---|---|
-| **GitHub Pages** | [marktantongco.github.io/portfolio](https://marktantongco.github.io/portfolio) | Primary — auto-deploys on push to `main` |
-| **Vercel** | Deployed via Vercel CLI | Secondary — zero-config edge deployment |
+| **GitHub Pages** | [marktantongco.github.io/portfolio](https://marktantongco.github.io/portfolio) | Primary — auto-deploys on push to `main` via GitHub Actions |
+| **Vercel** | Deployed via Vercel CLI | Secondary — zero-config edge deployment with cache headers |
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Version | Why |
+| Layer | Technology | Version | Purpose |
 |---|---|---|---|
-| **Build** | Vite | 8.x | Instant HMR, optimized static output, zero server runtime |
-| **UI** | React | 19.x | Component isolation, Suspense + lazy loading |
-| **Language** | TypeScript | 5.9.x | Full type safety across all 22+ components |
-| **3D** | Three.js | 0.183.x | Direct WebGL render loop, single dependency |
-| **3D Post** | three/examples/jsm/postprocessing | bundled | UnrealBloomPass, EffectComposer |
-| **Animation** | Framer Motion | 12.x | 80%+ of all animations: scroll reveals, springs, layout |
-| **Animation** | GSAP | 3.14.x | 20% only: timeline sequences, magnetic buttons |
-| **Styling** | Tailwind CSS | 4.x | Utility-first with CSS custom property integration |
-| **Icons** | Lucide React | latest | Lightweight, tree-shakeable |
-| **Code Highlight** | prism-react-renderer | 2.x | Syntax-highlighted code showcase |
-| **Toast** | Sonner | latest | Notification system (form feedback) |
+| **Build** | Vite | 8.x | Instant HMR, optimized static output, manual chunk splitting |
+| **UI** | React | 19.x | Component isolation, hooks-driven state, lazy loading |
+| **Language** | TypeScript | 5.9.x | Full type safety across 16 components + data layer |
+| **3D** | Three.js | 0.183.x | Hero particle field + case study modal canvas demos |
+| **Animation** | GSAP + ScrollTrigger | 3.14.x | All scroll reveals, section entrances, magnetic cards, parallax |
+| **Charts** | Chart.js | 4.5.x | Radar chart in Skills section + radar in Identity section |
+| **Styling** | Tailwind CSS | 4.x | Utility-first with `@tailwindcss/vite` plugin |
+| **Fonts** | Google Fonts (CDN) | — | Bebas Neue (display), DM Sans (body), DM Mono (labels) |
 | **Utilities** | clsx + tailwind-merge | latest | Safe className composition |
-
-### Banned Dependencies
-
-These are explicitly banned and verified by `validate.sh`:
-
-| Banned | Reason |
-|---|---|
-| Next.js, NextAuth, Prisma | Server-side only; this is a static SPA |
-| react-three/fiber, @react-three/drei | Use raw Three.js |
-| embla-carousel | Build carousel with Framer Motion |
-| recharts, chart.js | Build metrics with CSS/SVG only |
-| cmdk | Build command palette with vanilla React |
-| react-hook-form | Unnecessary complexity |
-| Google Fonts CDN | System fonts only |
 
 ---
 
 ## Design System
 
-### Color Palette — 12 CSS Custom Properties
+### Color Palette — CSS Custom Properties
 
-The entire visual identity is defined by 12 CSS custom properties in `:root`. **Zero hardcoded hex values exist in any `.tsx` component file.** Raw hex appears only in `globals.css` where tokens are defined.
+The entire visual identity is defined by CSS custom properties in `:root` with theme variants for dark and light modes. Component files reference only variables — zero hardcoded hex values in `.tsx`.
 
-```
---brutal-yellow      #FFEA00   Hero primary, CTAs, active nav, scroll progress
---brutal-lime        #ccff00   Identification section, AI skill bars
---brutal-cyan        #00ffff   Process section, demo accents, POWERUP
---brutal-magenta     #FF0080   Proof demos, project cards, BREAKTHROUGH
---brutal-gold        #FFD700   Trust/testimonials, SENTIENT accent
---brutal-orange      #FF6B00   Star ratings, REFINE step, hover accents
---brutal-red         #FF0033   Error states, validation failures
---brutal-green       #00FF66   Success, live indicators, AVAILABLE badge
---brutal-void        #0a0a0a   Page background
---brutal-surface     #111111   Card backgrounds, input backgrounds
---brutal-border      #FFFFFF   All borders, primary text
---brutal-text-muted  #666666   Secondary text, captions
-```
-
-### Brutalist Tokens
+**Dark Mode (default):**
 
 ```
---border-thin:    2px solid var(--brutal-border)
---border-thick:   4px solid var(--brutal-border)
---shadow-brutal:  6px 6px 0px var(--brutal-yellow)
---shadow-brutal-lg: 8px 8px 0px var(--brutal-yellow)
---shadow-hover:   10px 10px 0px var(--brutal-yellow)
---radius:         0px   ← NEVER border-radius
---transition:     150ms cubic-bezier(0.25, 0.46, 0.45, 0.94)
---easing-bounce:  cubic-bezier(0.34, 1.56, 0.64, 1)
+--bg:          #0a0a0a    Page background (void black)
+--bg2:         #0f0f0f    Elevated surface
+--bg3:         #181818    Deepest surface
+--fg:          #efefef    Primary text
+--fg2:         rgba(239,239,239,.58)    Secondary text
+--fg3:         rgba(239,239,239,.25)    Muted captions
+--border:      rgba(204,255,0,.2)       Default border (neon tint)
+--card:        #0f0f0f    Card backgrounds
+--nav-bg:      rgba(10,10,10,.92)       Navigation backdrop
+--neon:        #ccff00    Primary accent (neon lime)
+--cyan:        #00ffff    Secondary accent
+--accent:      #ccff00    Alias for --neon
+--accent-dim:  rgba(204,255,0,.08)      Subtle fills
+--accent-mid:  rgba(204,255,0,.38)      Medium fills
+--danger:      #ff3b30    Error states
+--success:     #00e676    Success states
 ```
 
-### Typography (System Fonts Only)
+**Light Mode:** Automatic inversion with warm paper tones (`#f3f2ed` background, `#111` text).
 
-| Role | Weight | Size | Transform |
-|---|---|---|---|
-| Display H1 | 900 | `clamp(3rem, 8vw, 7rem)` | uppercase |
-| Section H2 | 900 | `clamp(2rem, 5vw, 3.5rem)` | uppercase |
-| Subheading H3 | 700 | 1.25rem | uppercase |
-| Body | 400 | 1rem | none |
-| Label | 600 | 0.75rem | uppercase |
-| Code | 400 | 0.875rem | mono |
+### Typography Scale
 
-Font stack: `system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif`
+| Role | Font | Weight | Size | Transform |
+|---|---|---|---|---|
+| Display / Hero H1 | Bebas Neue | 400 | `clamp(62px, 12vw, 190px)` | uppercase |
+| Section H2 | Bebas Neue | 400 | `clamp(46px, 7.5vw, 120px)` | uppercase |
+| Subheading H3 | Bebas Neue | 400 | 1.6–1.8rem | uppercase |
+| Body | DM Sans | 300–400 | 0.73–0.88rem | none |
+| Label / Mono | DM Mono | 400 | 0.5–0.75rem | uppercase, wide tracking |
+| CLI / Code | DM Mono | 400 | 0.68–0.72rem | monospace |
 
-### Z-Index Master Table
+### Key Design Tokens
+
+```
+--bs:                1.5px solid var(--border)   ← Standard border shorthand
+--tt:                background .4s, color .4s, border-color .4s   ← Theme transition
+--border-radius:     0px or 2px max              ← Never rounded
+--cursor:            none (custom blob + dot)     ← Desktop only
+```
+
+### Z-Index Architecture
 
 | Layer | z-index | Component |
 |---|---|---|
-| Skip link (focus) | 200 | index.html |
-| Toast / Loading | 100 | Sonner / LoadingScreen |
-| Project modal | 70 | ProjectModal |
-| Scroll progress | 60 | ScrollProgress |
-| Command palette | 60 | CommandPalette |
-| Top navigation | 50 | Navigation |
-| Side dot nav | 40 | SideNav |
-| Hero scanlines | 5 | Hero |
-| Background effects | 0–1 | BackgroundEffects |
+| Preloader | 99999 | Preloader |
+| Custom cursor dot | 10000 | CustomCursor |
+| Custom cursor blob | 9999 | CustomCursor |
+| Noise overlay | 9000 | `body::before` |
+| Case study modal | 3000 | CaseStudyModal |
+| Navigation | 800 | Navigation |
+| Mobile drawer | 799 | Mobile drawer |
+| Scroll progress | 9999 | ScrollProgress |
+| Back to top | 500 | BackToTop |
+| Hero decorations | 1–6 | Grid, vignette, scanlines, corners |
 
 ---
 
-## Features
-
-### 4 Fully Interactive Demos
-
-The core differentiator of this portfolio. **Not visual mockups — fully functional mini-apps.**
-
-| Demo | Name | What It Does |
-|---|---|---|
-| **BREAKTHROUGH** | Cinematic Vision Analyzer | Dropdown selects color grading mode (ACES Filmic, Neo-Noir, Chromatic Pop, Bleach Bypass). Updates gradient preview strip + specs panel (lifted blacks, contrast ratio, color temp, saturation) in real-time. |
-| **POWERUP** | AI Prompt Builder | Textarea for custom prompts + 4 preset template buttons (Brand Voice, Product Shot, Social Post, Code Review). "Generate" button triggers 2s loading animation → simulated AI output with copy button. |
-| **SCAFFOLD** | Physics-First Builder | 8 draggable constraint chips (Temperature, Top-P, etc.). Click to move between Available and Active zones. Confidence score 0–100% updates real-time with color gradient (red → yellow → green). |
-| **SENTIENT** | Design Token System | Color picker, spacing dropdown (4/8/12/16px), typography dropdown (12/14/16/18px), border toggle (2/4px). Generates live `:root` CSS block with syntax highlighting. Copy button + live preview panel. |
-
-### Case Study Modal System
-
-Clicking **any** of the 5 featured project cards opens a full-screen case study overlay with:
-
-- **Header** — Project name (H2 uppercase), tag pills, date
-- **Hero mockup** — Gradient placeholder with overlaid title
-- **Overview** — 2–3 sentence expanded description
-- **Role & Stack** — Two-column layout with role and tech stack list
-- **Key Metrics** — 3 metric cards with big numbers, labels, accent-colored borders
-- **Process Highlights** — Scaffold Method steps applied (DIAGNOSE, ARCHITECT, EXECUTE, REFINE)
-- **CTA Row** — "View Live" + "View Source" buttons
-
-Modal features: focus trap, Esc/click-outside/X close, body scroll lock, focus return on close, `prefers-reduced-motion` disables animation.
-
-### 4-Layer Navigation System
-
-1. **Top Navigation Bar** — Fixed, scroll-spy highlighting (6 sections), mobile hamburger with full-screen overlay, auto-hide on scroll down / reappear on scroll up, "LET'S TALK" CTA button
-2. **Side Dot Navigation** — Fixed right edge (desktop only), 7 dots for 7 sections, active dot scales + glows yellow, hover shows tooltip label
-3. **Command Palette** — `Ctrl+K` / `Cmd+K` opens modal, filterable search across all sections + demos + projects + external links, arrow key navigation + Enter to select, Esc to close
-4. **Scroll Progress Bar** — Fixed top, 4px height, gradient (yellow → cyan → green), width proportional to scroll position via Framer Motion `useScroll()`
-
-### Page Sections
-
-| # | Section | Component | H2 Text | Description |
-|---|---|---|---|---|
-| 1 | Hero | Hero.tsx | *(none)* | Three.js 3D scene: 3000 particles, bloom post-processing, 8 floating wireframe shapes, rotating grid. Text overlay: name, headline, "Current Focus" card, typewriter cycling 3 taglines, marquee ticker, corner bracket decorations, scroll indicator. Lazy-loaded via `React.lazy()`. |
-| 2 | Identification | Identity.tsx | *(label)* | 4-column responsive grid: AI Image Enhancement, Brand Systems, GEO Optimization, Prompt Architecture. Each with number, accent color, description, bottom accent bar on hover. |
-| 3 | Process | Process.tsx | **THE SCAFFOLD METHOD** | 4-step timeline (DIAGNOSE, ARCHITECT, EXECUTE, REFINE) with Lucide icons, expanding gradient accent bars, diamond indicators, dashed connectors, dot-pattern background. |
-| 4 | Proof | Proof/Proof.tsx | *(tabbed)* | Tabbed container with 6 sub-sections: Skills (25 bars), Demos (4 interactive), Projects (5 cards), Code (3 tabs), Metrics (4 cards), Journey (7 entries). |
-| 5 | Testimonials | Trust.tsx | **WHAT CLIENTS SAY** | 4-card testimonial carousel: auto-advance 6s, pause on hover, Framer Motion drag/swipe, star ratings, gradient initials avatar. |
-| 6 | Thoughts | Thoughts.tsx | **THOUGHTS & PROCESS** | 3 blog/thought-leadership cards linking to real article URLs. Category accent dots (Process, Design, Strategy). Built for GEO (Generative Engine Optimization). |
-| 7 | Contact | Contact.tsx | **START THE CONVERSATION** | 4-field form (name, email, subject, message) with HTML5 + JS validation, error shake animation, success confetti burst, sonner toast. Newsletter form below. Social icon buttons. |
-
----
-
-## Project Architecture
+## Architecture
 
 ```
 portfolio/
 ├── .github/workflows/
-│   └── deploy.yml              # GitHub Pages CI/CD
-├── backup/                     # Archived previous build files
-│   ├── commit-info.txt
-│   └── ...                     # Full source tree backup
+│   └── deploy.yml              # GitHub Pages CI/CD (Node 22, npm build, deploy dist/)
+├── backup/                     # Archived previous version (full source tree)
 ├── public/
-│   ├── favicon.svg             # Brutalist "MT" mark
-│   ├── og-image.png            # 1200x630 OG image (AI-generated)
-│   ├── manifest.json           # PWA manifest
-│   └── icons.svg               # Legacy icon
+│   ├── favicon.svg             # Brutalist "MT" SVG mark
+│   ├── og-image.png            # 1200×630 Open Graph image
+│   ├── manifest.json           # PWA manifest (standalone, theme #FFEA00)
+│   └── icons.svg               # Social icon sprites
 ├── src/
 │   ├── components/
-│   │   ├── BackgroundEffects.tsx   # Grid overlay, vignette, 8 floating shapes
-│   │   ├── CommandPalette.tsx      # Ctrl+K search modal (vanilla React)
-│   │   ├── Contact.tsx             # Form + newsletter + socials + confetti + toast
-│   │   ├── Footer.tsx              # Status badge + copyright + socials
-│   │   ├── Hero.tsx                # Three.js scene (lazy-loaded via React.lazy)
-│   │   ├── HeroSkeleton.tsx        # CSS gradient fallback for no-WebGL
-│   │   ├── Identity.tsx            # 4-column capability grid
-│   │   ├── LoadingScreen.tsx       # Dual rings, progress bar, scanlines
-│   │   ├── Navigation.tsx          # Top nav + hamburger + auto-hide
-│   │   ├── Process.tsx             # "THE SCAFFOLD METHOD" 4-step timeline
-│   │   ├── ProjectModal.tsx        # Case study overlay (z-70)
-│   │   ├── ScrollProgress.tsx      # Gradient scroll bar
-│   │   ├── SideNav.tsx             # Dot navigation (desktop)
-│   │   ├── Thoughts.tsx            # "THOUGHTS & PROCESS" blog cards
-│   │   ├── Trust.tsx               # "WHAT CLIENTS SAY" carousel
-│   │   └── Proof/
-│   │       ├── Proof.tsx           # Tab container (6 tabs)
-│   │       ├── Skills.tsx          # 25 filterable skill bars
-│   │       ├── InteractiveDemos.tsx # 4 functional demo tabs
-│   │       ├── FeaturedProjects.tsx # 5 project cards → modal
-│   │       ├── CodeShowcase.tsx    # 3 syntax-highlighted code tabs
-│   │       ├── LiveMetrics.tsx     # Simulated dashboard (CSS/SVG)
-│   │       └── Timeline.tsx        # 7-entry journey (2019–2026)
+│   │   ├── BackToTop.tsx        # Fixed scroll-to-top button (fade on scroll)
+│   │   ├── Blog.tsx             # Dual-panel: featured article + stacked cards
+│   │   ├── CaseStudyModal.tsx   # Full-screen modal with Three.js canvas demo
+│   │   ├── Contact.tsx          # Form (4 fields) + email + socials + validation
+│   │   ├── CustomCursor.tsx     # Blob + dot cursor (desktop only, mix-blend-mode)
+│   │   ├── Footer.tsx           # 3-column: brand, navigation, social links
+│   │   ├── Hero.tsx             # Three.js 3D particle scene + text overlay
+│   │   ├── Identity.tsx         # CLI typewriter + philosophy cards + radar chart
+│   │   ├── Navigation.tsx       # Fixed nav + scroll spy + mobile hamburger drawer
+│   │   ├── Preloader.tsx        # "MAT" logo + progress bar + percentage counter
+│   │   ├── Process.tsx          # 4-step diagonal timeline (Diagnose → Refine)
+│   │   ├── ScrollProgress.tsx   # Fixed 2px neon progress bar
+│   │   ├── Services.tsx         # 3-column service cards with deliverables + pricing
+│   │   ├── Skills.tsx           # Chart.js radar + category pills with hover highlight
+│   │   ├── Testimonials.tsx     # 3-card grid with quotes + author metadata
+│   │   ├── Ticker.tsx           # Infinite horizontal marquee (neon yellow bar)
+│   │   └── Work.tsx             # 5 project cards + "Next →" CTA card
 │   ├── hooks/
-│   │   ├── useActiveSection.ts     # Intersection Observer → active section
-│   │   ├── useReducedMotion.ts     # prefers-reduced-motion detection
-│   │   ├── useThreeScene.ts        # Three.js lifecycle (init/animate/dispose)
-│   │   └── useCommandPalette.ts    # Ctrl+K keyboard shortcut
+│   │   ├── useActiveSection.ts  # IntersectionObserver → active nav section ID
+│   │   └── useReducedMotion.ts  # `prefers-reduced-motion` media query hook
 │   ├── lib/
-│   │   ├── data.ts                # All content: skills, projects, testimonials, etc.
-│   │   ├── design-tokens.ts       # Exported CSS variable constants
-│   │   ├── social-icons.tsx       # Custom SVG icons (Github, Twitter, etc.)
-│   │   └── utils.ts               # cn() helper, formatPercentage()
+│   │   ├── data.ts              # All typed content data (projects, services, etc.)
+│   │   └── gsap-setup.ts        # GSAP + ScrollTrigger registration
 │   ├── styles/
-│   │   └── globals.css            # :root tokens, utilities, keyframes, reduced-motion
-│   ├── App.tsx                    # Root: lazy hero + sections + Toaster + ProjectModal
-│   └── main.tsx                   # Entry point
-├── index.html                     # JSON-LD, OG meta, skip link, PWA manifest link
-├── vite.config.ts                 # base: '/portfolio/', manual chunks
-├── tsconfig.json                  # Strict mode, path aliases (@/)
-├── tailwind.config.js             # Extended colors, shadows, fonts
-├── validate.sh                    # 13-check constraint validation
-├── package.json                   # Scripts: dev, build, build:prod, validate
-└── README.md                      # This file
+│   │   └── globals.css          # 500+ lines: tokens, components, animations, responsive
+│   ├── App.tsx                  # Root component: layout + section orchestration
+│   └── main.tsx                 # Entry point
+├── index.html                   # OG meta, JSON-LD, skip link, PWA manifest, fonts
+├── vite.config.ts               # base: '/portfolio/', manual chunks (hero/charts/gsap/vendor)
+├── vercel.json                  # Build config, rewrites, cache headers, security headers
+├── tailwind.config.js           # Extended theme tokens
+├── tsconfig.json                # Strict mode, path alias @/ → src/
+├── package.json                 # Scripts: dev, build, build:prod, lint, validate
+├── validate.sh                  # Automated constraint validation script
+└── README.md                    # This file
 ```
 
 ---
@@ -276,61 +200,160 @@ portfolio/
 ### Data Flow
 
 ```
-useActiveSection (Intersection Observer)
-    ├── Navigation.tsx  (scroll-spy highlight)
-    ├── SideNav.tsx     (active dot)
-    ├── ScrollProgress.tsx (progress %)
-    └── CommandPalette.tsx (default index)
-
 App.tsx (state owner)
-    ├── activeSection: SectionId
-    ├── paletteOpen: boolean
-    └── modalProject: Project | null
+    ├── activeSection: string          ← useActiveSection() hook
+    └── modalProject: Project | null   ← Work card click → CaseStudyModal
+
+useActiveSection (IntersectionObserver)
+    └── Navigation.tsx (scroll-spy highlight + mobile drawer active state)
+
+useReducedMotion (media query)
+    └── Hero, Work, Services, Skills, Process, Testimonials, Blog, Contact
 ```
 
-### Animation Allocation
+### Component Dependencies
 
-| Animation | Library | Implementation |
-|---|---|---|
-| Scroll reveals | Framer Motion | `whileInView` + `initial` + `animate` |
-| Stagger effects | Framer Motion | `variants` + `staggerChildren: 0.1` |
-| Spring physics | Framer Motion | `type: "spring", stiffness: 300, damping: 20` |
-| Tab content swap | Framer Motion | `AnimatePresence` + `mode="wait"` |
-| Scroll progress | Framer Motion | `useScroll()` + `useTransform()` |
-| Navbar auto-hide | Framer Motion | `useMotionValue` + `useScroll` + `animate` |
-| Skill bar fill | Framer Motion | `whileInView` + `animate={{ width: "97%" }}` |
-| Metric counting | Framer Motion | `useSpring` + `useTransform` |
-| Typewriter text | Custom React | `useState` + `setTimeout` interval |
-| Marquee scroll | CSS | `@keyframes marquee` |
-| Corner brackets | CSS | `@keyframes bracket-pulse` |
-| Floating shapes | Framer Motion | `animate` + `infinite` rotation |
-| Confetti burst | Framer Motion | 20 `<span>` elements with `exit` + `rotate` |
-| Modal open/close | Framer Motion | `AnimatePresence` + `scale: 0.95 → 1` |
-| Form error shake | Manual | CSS `@keyframes shake` (GSAP-optional) |
+| Component | Lines | Key Dependencies | Renders |
+|---|---|---|---|
+| **App.tsx** | 59 | All components | Layout shell |
+| **Hero.tsx** | 265 | Three.js, GSAP, useReducedMotion | 3D particle scene + name + badge + scroll indicator |
+| **Identity.tsx** | 262 | Three.js, Chart.js, GSAP | CLI typewriter + philosophy + radar chart + stats |
+| **Work.tsx** | 99 | GSAP, ScrollTrigger | 5 project cards → opens CaseStudyModal |
+| **CaseStudyModal.tsx** | 332 | Three.js, GSAP | Full-screen overlay with canvas demo + metrics |
+| **Services.tsx** | 56 | GSAP, ScrollTrigger | 3-column service cards |
+| **Skills.tsx** | 143 | Chart.js, GSAP, ScrollTrigger | Radar chart + 4 category pill groups |
+| **Process.tsx** | 56 | GSAP, ScrollTrigger | 4-step timeline |
+| **Testimonials.tsx** | 46 | GSAP, ScrollTrigger | 3-card testimonial grid |
+| **Blog.tsx** | 78 | GSAP, ScrollTrigger | Featured + stacked article cards |
+| **Contact.tsx** | 189 | GSAP, useReducedMotion | Form + validation + social links |
+| **Navigation.tsx** | 92 | — | Fixed nav + hamburger + mobile drawer |
+| **CustomCursor.tsx** | 98 | — | Blob SVG + dot (desktop only) |
+| **Preloader.tsx** | 32 | — | MAT logo + progress bar |
+| **ScrollProgress.tsx** | 16 | — | 2px neon bar |
+| **Ticker.tsx** | 15 | — | Infinite marquee |
+| **BackToTop.tsx** | 19 | — | Fade-in scroll button |
+| **Footer.tsx** | 43 | — | 3-column footer |
+
+---
+
+## Animation System
+
+All scroll-driven animations use GSAP ScrollTrigger. The `useReducedMotion` hook detects `prefers-reduced-motion` and skips all GSAP registrations when active.
+
+### Animation Registry
+
+| Animation | Trigger | Duration | Easing | Purpose |
+|---|---|---|---|---|
+| **Hero badge fade-in** | Page load | 0.6s (0.3s delay) | power2.out | Draw attention to availability status |
+| **Hero name scramble** | Page load | 0.8s (0.5s delay) | steps(1) per char | Cinematic text reveal — each character cycles through random glyphs |
+| **Hero subtitle fade** | Page load | 0.6s (1.0s delay) | power2.out | Layered entrance after name resolves |
+| **Hero tagline slide-up** | Page load | 0.5s (1.2s delay) | power2.out | CTA appears last in hero sequence |
+| **Hero scroll indicator** | Page load | 0.5s (1.4s delay) | power2.out | Encourage scroll engagement |
+| **Hero parallax** | Scroll | Continuous | Linear | Depth illusion — content shifts at 0.3× scroll speed |
+| **Hero corner brackets** | Scroll into view | 0.8s | power2.out | Frame the viewport with decorative borders |
+| **CLI typewriter lines** | Section enters viewport | 0.12s per char, 0.4s line gap | Linear | Terminal-style command → output reveal |
+| **Identity stats count-up** | Section enters viewport | 1.2s | power2.out | Animated number counters for credibility |
+| **Work cards stagger** | Section enters viewport | 0.6s per card, 0.1s stagger | power3.out | Sequential reveal creates reading rhythm |
+| **Work card magnetic tilt** | Mouse hover | Instant | Spring-like | Cards subtly follow cursor for tactile feel |
+| **Case study modal open** | Card click | 0.35s | cubic-bezier(0.22, 1, 0.36, 1) | Smooth scale + translate entrance |
+| **Case study modal Three.js** | Modal open | Continuous | — | Per-project unique canvas demo (particles/brand orbit/shader) |
+| **Services cards stagger** | Section enters viewport | 0.6s per card, 0.12s stagger | power3.out | Staggered reveal for service offerings |
+| **Skills radar draw** | Section enters viewport | 1.0s | ease-out | Chart.js radar animation from center |
+| **Process steps slide-in** | Section enters viewport | 0.7s per step, 0.15s stagger | power2.out | Sequential timeline reveal |
+| **Testimonials stagger** | Section enters viewport | 0.5s per card, 0.1s stagger | power2.out | Quote cards appear in reading order |
+| **Blog featured slide-right** | Section enters viewport | 0.7s | power2.out | Featured article enters from left |
+| **Blog stacked slide-up** | Section enters viewport | 0.5s per card, 0.12s stagger | power2.out | Secondary articles follow |
+| **Contact heading reveal** | Section enters viewport | 0.8s | power3.out | Large heading draws attention |
+| **Ticker infinite scroll** | Always | 28s per loop | Linear | Continuous keyword marquee — ambient motion |
+| **Neon pulse (hero name)** | Always | 2.8s cycle | ease-in-out | Text-shadow glow oscillation for "TANTONGCO" |
+| **Badge ping** | Always | 2s cycle | ease-out | Expanding ring on availability dot |
+| **Scroll indicator dot** | Always | 2.2s cycle | ease-in-out | Bouncing dot inside mouse icon |
+| **Scanline sweep** | Always | 5s cycle | Linear | Horizontal line sweeps down hero |
+| **Cursor blob follow** | Mouse move | 0.15s lag | Linear | Smooth trailing blob with mix-blend-mode |
+| **Preloader bar fill** | Page load | ~2s total | Linear | Progress bar fills as resources load |
+
+### Reduced Motion
+
+When `prefers-reduced-motion: reduce` is active:
+- All GSAP ScrollTrigger registrations are skipped
+- Three.js canvas is not initialized
+- CSS animations are disabled via media query
+- Preloader still functions (accessibility requirement)
+- All content remains fully accessible
 
 ---
 
 ## Data Layer
 
-All content lives in `src/lib/data.ts` as typed TypeScript exports:
+All content lives in `src/lib/data.ts` as typed TypeScript exports. No external CMS, no API calls — everything is statically typed and tree-shakeable.
 
-| Data Structure | Count | Used By |
-|---|---|---|
-| `navigationItems` | 6 sections | Navigation, SideNav, CommandPalette |
-| `identityBlocks` | 4 capabilities | Identity |
-| `processSteps` | 4 steps | Process |
-| `skills` | 25 skills across 5 categories | Skills |
-| `demoConfigs` | 4 demos | InteractiveDemos |
-| `projects` (with `caseStudy`) | 5 projects | FeaturedProjects, ProjectModal |
-| `testimonials` | 4 quotes | Trust |
-| `timeline` | 7 entries (2019–2026) | Timeline |
-| `codeTabs` | 3 code samples | CodeShowcase |
-| `liveMetrics` | 4 metrics | LiveMetrics |
-| `blogPosts` | 3 articles | Thoughts |
-| `cinematicModes` | 4 modes | InteractiveDemos (BREAKTHROUGH) |
-| `promptTemplates` | 4 templates | InteractiveDemos (POWERUP) |
-| `socialLinks` | 5 platforms | Contact, Footer |
-| `commandPaletteItems` | 15 items | CommandPalette |
+| Export | Type | Count | Used By |
+|---|---|---|---|
+| `NAV_LINKS` | `NavItem[]` | 8 sections | Navigation, Footer |
+| `PROJECTS` | `Project[]` | 5 projects | Work, CaseStudyModal |
+| `SERVICES` | `Service[]` | 3 services | Services |
+| `TESTIMONIALS` | `Testimonial[]` | 3 quotes | Testimonials |
+| `BLOG_POSTS` | `BlogPost[]` | 3 articles | Blog |
+| `SKILL_CATEGORIES` | `SkillCategory[]` | 4 categories, 27 skills | Skills |
+| `PROCESS_STEPS` | `ProcessStep[]` | 4 steps | Process |
+| `IDENTITY_TAGS` | `string[]` | 5 tags | Identity |
+| `PHILOSOPHIES` | `Philosophy[]` | 2 quotes | Identity |
+| `STATS` | `StatItem[]` | 4 stats | Identity |
+| `TICKER_ITEMS` | `string[]` | 8 keywords | Ticker |
+| `CLI_COMMANDS` | `{cmd, output, type}[]` | 3 commands | Identity |
+| `SKILL_RADAR_LABELS` | `string[]` | 4 axes | Identity |
+| `SKILL_RADAR_BASE` | `number[]` | 4 values | Identity |
+| `SOCIAL_LINKS` | `{label, href}[]` | 4 platforms | Contact, Footer |
+
+### Case Study Data Structure
+
+Each `Project` in `PROJECTS` contains a full case study with:
+
+```typescript
+interface Project {
+  num: string;                    // "01" – "05"
+  title: string;                  // Project name
+  desc: string;                   // One-liner description
+  tags: string[];                 // Tech stack tags
+  problem: string;                // Problem statement
+  solution: string;               // Solution description
+  metrics: { n: string; l: string; sub: string }[];  // 3 key metrics
+  steps: { n: string; t: string; b: string }[];      // 4 process steps
+  results: { label: string; value: string; note: string }[];  // 4 result items
+  demo: string;                   // Three.js demo type identifier
+  demoLabel: string;              // Demo label text
+}
+```
+
+### The 5 Case Studies
+
+| # | Project | Tags | Demo |
+|---|---|---|---|
+| 01 | Photography AI System | Flux, Midjourney, ComfyUI, ACES | Live Particle Simulation |
+| 02 | Living Portfolio OS | GSAP, Three.js, Next.js, Design Tokens | Interactive Particle Field |
+| 03 | Brand Intelligence Engine | Brand Systems, Claude API, Figma | Brand Orbit Visualization |
+| 04 | WebGPU Experiential Layer | Next.js, WebGPU, R3F, GSAP | WebGPU Shader Demo |
+| 05 | SEO / GEO Framework | SEO, GEO, Prompt Eng, Strategy | Performance Analytics |
+
+---
+
+## Page Sections
+
+| # | Section | Component | Key Features |
+|---|---|---|---|
+| 0 | **Preloader** | Preloader | "MAT" logo fade-in, progress bar, percentage counter |
+| 1 | **Hero** | Hero | Three.js 3D particle scene, neon pulse name, availability badge, parallax, scanline, grid overlay, vignette, corner brackets, scroll indicator |
+| 2 | **Ticker** | Ticker | Infinite neon yellow marquee with 8 rotating keywords |
+| 3 | **Identity** | Identity | CLI typewriter (3 commands), philosophy cards, stats grid, Chart.js radar chart |
+| 4 | **Work** | Work | 5 project cards in 3-column grid with magnetic hover, "Next →" CTA |
+| 5 | **Case Study Modal** | CaseStudyModal | Full-screen overlay with Three.js canvas demo, problem/solution, 3 metrics, 4 process steps, 4 results, tags, CTA |
+| 6 | **Services** | Services | 3-column grid: AI Creative Strategy ($2.5K), Brand Intelligence ($4K), Immersive Web ($3.5K) |
+| 7 | **Skills** | Skills | Chart.js radar + 4 category pill groups (27 skills), hover highlights |
+| 8 | **Process** | Process | 4-step diagonal timeline: Diagnose → Architect → Execute → Refine |
+| 9 | **Testimonials** | Testimonials | 3-card grid with blockquotes, author metadata |
+| 10 | **Blog** | Blog | Dual panel: featured article (large) + 2 stacked cards |
+| 11 | **Contact** | Contact | Heading with watermark, email link, social links, 4-field form with validation |
+| 12 | **Footer** | Footer | 3-column: brand, section links, social links |
 
 ---
 
@@ -351,84 +374,37 @@ cd portfolio
 # Install dependencies
 npm install
 
-# Start development server
+# Start development server (http://localhost:5173)
 npm run dev
 ```
-
-The dev server starts at `http://localhost:5173`.
 
 ### Build Commands
 
 ```bash
-npm run dev          # Start dev server with HMR
-npm run build        # Production build (minified)
-npm run build:prod   # Production build (NODE_ENV=production)
+npm run dev          # Vite dev server with HMR
+npm run build        # Production build → dist/
+npm run build:prod   # NODE_ENV=production build
 npm run preview      # Preview production build locally
+npm run lint         # ESLint check
 npm run validate     # Run constraint validation (validate.sh)
 ```
 
 ### Import Convention
 
-Every `.tsx` file follows this order:
-
 ```typescript
 // 1. React imports
 import { useState, useEffect, useRef } from 'react';
-// 2. Framer Motion
-import { motion, AnimatePresence } from 'framer-motion';
-// 3. Third-party libraries
-import { Search } from 'lucide-react';
-// 4. Hooks
-import { useActiveSection } from '@/hooks/useActiveSection';
-// 5. Data / tokens
-import { skills } from '@/lib/data';
-// 6. Components (relative paths)
-import { SkillBar } from './SkillBar';
-// 7. Styles
+// 2. Third-party libraries
+import * as THREE from 'three';
+import { gsap, ScrollTrigger } from '@/lib/gsap-setup';
+import { Chart } from 'chart.js/auto';
+// 3. Hooks
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+// 4. Data
+import { PROJECTS, SERVICES } from '@/lib/data';
+// 5. Styles (global, always imported)
 import '@/styles/globals.css';
 ```
-
----
-
-## Validation & Constraint Compliance
-
-The `validate.sh` script enforces **13 automated checks** derived from 5 rounds of A/B testing against AI-assisted deployments:
-
-```bash
-$ npm run validate
-
-=== CONSTRAINT VALIDATION ===
-✓ PASS: No banned dependencies
-✓ PASS: All 22 component files exist
-✓ PASS: 20/12+ color tokens found
-✓ PASS: No hardcoded hex in TSX files
-✓ PASS: Found 'skip to content'
-✓ PASS: Found '<main'
-✓ PASS: Found '<header'
-✓ PASS: Found '<footer'
-✓ PASS: Found 'aria-hidden="true"'
-✓ PASS: prefers-reduced-motion handled
-✓ PASS: application/ld+json present
-✓ PASS: og:image present
-✓ PASS: manifest.json present
-✓ PASS: Total bundle 1184KB within 1.5MB budget
-
-=== RESULTS ===
-ALL CHECKS PASSED
-```
-
-### 6 Persistent Failure Modes (Prevented)
-
-These are the failures that occurred across all previous build attempts. Each one has explicit prevention mechanisms:
-
-| # | Failure | Prevention |
-|---|---|---|
-| 1 | **Next.js hijack** | `validate.sh` checks for `next` in `package.json`; Vite enforced |
-| 2 | **Interactive demos → static cards** | `InteractiveDemos.tsx` built first; 4 working mini-apps |
-| 3 | **A11y/PWA/SEO erasure** | Checkpoint 3 after `index.html`; validate.sh checks all meta tags |
-| 4 | **CSS variable substitution** | validate.sh checks for hex in `.tsx` files; 0 tolerance |
-| 5 | **Decoration over function** | Every visual element mapped to a spec in the master prompt |
-| 6 | **Banned dependency import** | validate.sh checks for embla, recharts, cmdk, etc. |
 
 ---
 
@@ -436,36 +412,26 @@ These are the failures that occurred across all previous build attempts. Each on
 
 | Metric | Target | Actual | Status |
 |---|---|---|---|
-| Total bundle (gzipped) | < 1.5 MB | ~306 KB | ✅ |
-| Three.js chunk (gzipped) | < 500 KB | ~134 KB | ✅ |
-| Framer Motion chunk (gzipped) | < 140 KB | ~47 KB | ✅ |
-| Hero chunk (lazy, gzipped) | < 50 KB | ~3.3 KB | ✅ |
-| Build time | < 2s | ~369ms | ✅ |
-| CSS output | — | 5.3 KB gzipped | ✅ |
+| Total bundle (gzipped) | < 1.5 MB | ~321 KB | ✅ |
+| Three.js chunk (gzipped) | < 500 KB | ~125 KB | ✅ |
+| Chart.js chunk (gzipped) | < 250 KB | ~70 KB | ✅ |
+| GSAP chunk (gzipped) | < 100 KB | ~44 KB | ✅ |
+| App code (gzipped) | < 100 KB | ~15 KB | ✅ |
+| CSS output (gzipped) | — | ~7.3 KB | ✅ |
+| Build time | < 2s | ~310ms | ✅ |
 | Total chunks | — | 8 | ✅ |
 
 ### Chunk Splitting Strategy
 
 ```
-hero-*.js          → Three.js (lazy loaded on hero viewport)
-framer-motion-*.js → Framer Motion
-vendor-*.js         → React + ReactDOM
-index-*.js          → Application code + all components
-Hero-*.js           → Hero component (lazy)
+hero-*.js              → Three.js + postprocessing (heaviest, lazy loaded)
+charts-*.js            → Chart.js (loaded with Skills section)
+gsap-*.js              → GSAP + ScrollTrigger
+vendor-*.js            → React + ReactDOM
+rolldown-runtime-*.js  → Vite runtime
+index-*.js             → All application code + components
+index-*.css            → All styles (global CSS)
 ```
-
----
-
-## Progressive Enhancement
-
-| Condition | Behavior |
-|---|---|
-| **No WebGL** | CSS animated radial gradient `radial-gradient(circle, rgba(255,234,0,0.1), #0a0a0a 70%)` + all text visible |
-| **`prefers-reduced-motion`** | Static content, no canvas, no animations, no GSAP |
-| **Slow 2g/3g** | 2s loading screen, then attempt Three.js; fail at 5s → CSS gradient |
-| **`hardwareConcurrency < 4`** | 1,000 particles (reduced from 3,000), no bloom post-processing |
-| **JS disabled** | All content accessible via semantic HTML; forms submit normally |
-| **Canvas fails** | Hidden via CSS `display: none` |
 
 ---
 
@@ -473,18 +439,17 @@ Hero-*.js           → Hero component (lazy)
 
 | Requirement | Implementation |
 |---|---|
-| **Skip link** | First focusable element in `index.html`, `sr-only` → `focus:not-sr-only`, z-index 200 |
-| **Semantic HTML** | `<header>`, `<nav>`, `<main id="main">`, `<section>`, `<article>`, `<footer>` |
-| **`aria-label`** | On ALL interactive elements (tabs, carousel dots, hamburger, nav dots, command palette) |
-| **`aria-hidden="true"`** | On ALL decorative elements (canvas, floating shapes, scanlines, grid, vignette, marquee) |
-| **`aria-live="polite"`** | On form validation messages + testimonial carousel container |
-| **`aria-modal="true"`** | On case study dialog |
-| **Focus-visible** | 2px solid `var(--brutal-yellow)` outline, 2px offset |
-| **Focus trap** | Case study modal traps focus when open, returns focus to triggering card on close |
-| **Keyboard nav** | Tab through everything, Enter/Space to activate, arrow keys in command palette |
-| **`prefers-reduced-motion`** | CSS media query + React hook disables all animations and Three.js entirely |
-| **Touch targets** | All buttons minimum 44×44px, tab pills minimum 44px height |
-| **Color contrast** | All text/background ≥ 4.5:1 ratio. `#666` on `#0a0a0a` = 5.3:1 ✅ |
+| **Skip link** | First focusable element in `index.html`, hidden by default, appears on focus |
+| **Semantic HTML** | `<nav>`, `<main id="main">`, `<section>`, `<article>`, `<footer>` |
+| **`aria-label`** | On nav, sections, mobile drawer, form inputs, buttons |
+| **`aria-modal="true"`** | On case study overlay dialog |
+| **`aria-hidden="true"`** | On decorative elements (canvas, grid, scanlines, vignette, ticker, cursor) |
+| **Focus-visible** | 2px solid `var(--accent)` outline with 2px offset on all interactive elements |
+| **`prefers-reduced-motion`** | CSS media query + `useReducedMotion` hook disables all GSAP and Three.js |
+| **Keyboard navigation** | Tab through all interactive elements, Enter/Space to activate |
+| **Form validation** | HTML5 `required` + `pattern` + custom JS validation with visual feedback |
+| **Color contrast** | Dark mode: `#efefef` on `#0a0a0a` = 17.6:1 ✅ · `#ccff00` on `#0a0a0a` = 14.8:1 ✅ |
+| **Touch targets** | All buttons and links ≥ 44×44px |
 
 ---
 
@@ -492,27 +457,27 @@ Hero-*.js           → Hero component (lazy)
 
 ### Search Engine Optimization
 
-- **JSON-LD** Person schema in `<head>` with name, job title, URL, sameAs, knowsAbout
+- **JSON-LD** Person schema in `<head>`: name, job title, URL, sameAs, knowsAbout, workLocation
 - **Open Graph** meta tags: title, description, url, image, type, locale
-- **Twitter Card** summary_large_image with creator handle
-- **`robots`** meta: `index, follow`
+- **Twitter Card** `summary_large_image` with creator handle `@markytanky`
+- **`robots`** meta: `index, follow, max-image-preview:large`
 - **Canonical URL** via `og:url`
+- **DNS prefetch + preconnect** for Google Fonts and CDN assets
 
 ### Progressive Web App
 
-- **Manifest**: standalone display, `#FFEA00` theme color, SVG favicon
-- **Apple Touch Icon**: 180x180 referenced in `<head>`
-- **Offline**: Service worker precaches static assets
-- **Installable**: meets PWA installability criteria
+- **Manifest**: standalone display, `#FFEA00` theme color, SVG favicon, start URL `/portfolio/`
+- **Apple Touch Icon**: Referenced in `<head>`
+- **Installable**: Meets PWA installability criteria
 
 ### Generative Engine Optimization (GEO)
 
-The **THOUGHTS & PROCESS** section is specifically designed for GEO — making the site citable by AI search engines (ChatGPT, Perplexity, Gemini):
+The **Blog** section is designed for GEO — making the portfolio citable by AI search engines (ChatGPT, Perplexity, Gemini):
 
-- 3 blog/thought-leadership cards linking to real article URLs
-- RSS feed `<link>` signals content production to crawlers
-- Authorship content with category taxonomy
-- Structured data supporting entity authority
+- 3 thought-leadership articles with category taxonomy (AI Strategy, Design Engineering, SEO/GEO)
+- Authorship content with timestamps and read-time metadata
+- Structured data (JSON-LD Person schema) supporting entity authority
+- Real article URLs for citation backlinks
 
 ---
 
@@ -526,44 +491,51 @@ Automatic deployment via GitHub Actions workflow at `.github/workflows/deploy.ym
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 ```
 
-1. Checkout code
-2. Setup Node.js 20
-3. `npm ci` → `npm run build`
-4. Deploy `dist/` via `actions/deploy-pages@v4`
+Pipeline: Checkout → Setup Node.js 22 → `npm ci` → `npm run build` → Upload `dist/` → Deploy via `actions/deploy-pages@v4`
 
 **Base path:** `/portfolio/` (configured in `vite.config.ts`)
 
 ### Vercel (Secondary)
 
-Deployed via Vercel CLI or GitHub integration:
+Configuration in `vercel.json`:
 
-```bash
-npx vercel --prod
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "headers": [
+    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "X-Frame-Options", "value": "DENY" },
+      { "key": "X-XSS-Protection", "value": "1; mode=block" }
+    ]}
+  ]
+}
 ```
 
-Zero environment variables needed — fully static.
+Deploy via Vercel CLI: `npx vercel --prod`
+
+Zero environment variables needed — fully static site.
 
 ### Manual Build
 
 ```bash
 npm install
 npm run build
-# Output: dist/ directory
+# Output: dist/ directory — serve with any static file server
 ```
-
----
-
-## Backup & Versioning
-
-Previous build versions are archived in the `backup/` directory before each redeployment. The `backup/commit-info.txt` file records the commit hash and timestamp of the archived version.
 
 ---
 
 ## Design Philosophy
 
-> A void-black control room. Electric yellow commands attention from the darkness — it is the only warm color in a frozen monochrome field. Text is monumental, uppercase, and unapologetic: every heading looks like a stamped metal plate. The hero breathes with 3,000 particles and 8 orbiting geometric shapes wrapped in bloom glow, but the moment a visitor scrolls, the 3D fades and a hard grid takes over — every section arrives with a kinetic punch, not a soft fade. IDENTIFICATION, PROCESS, PROOF, TRUST, THOUGHTS, CONTACT reveal like hydraulic panels slamming into place, each with its own accent color bleeding through the borders. The Scaffold Method steps expand like pistons with gradient bars that fill as the visitor scrolls. Twenty-five skill bars fill like fuel gauges with per-category gradient glow. Four interactive demos let visitors touch the work: the BREAKTHROUGH cinematic analyzer updates in real-time when you pick a mode, the SCAFFOLD builder's confidence score shifts color as you drag constraints. Five project cards prove it's shipped — but clicking any card opens a case study modal that fills the screen with project details, mockup placeholders, role/stack breakdowns, key metrics with accent-colored borders, and Scaffold Method process highlights. This is the proof-of-work layer that separates a portfolio from a brochure. Below the testimonials, three thought-leadership cards with category accent dots link to process writeups — this is the GEO play, the signal to Google and AI engines that this domain produces original thought, not just displays work. The command palette (Ctrl+K) opens to the current section. The side dot navigation provides constant spatial orientation with 7 dots. A gradient scroll progress bar (yellow → cyan → green) tracks the journey. Floating geometric shapes drift at 15% opacity like radar blips. A keyword marquee scrolls beneath the hero. Every card has a hard 6px offset shadow in yellow. Every hover lifts the card and expands the shadow. No rounded corners — zero border-radius. No soft drop shadows. No corporate blue. This is not a website. This is a control room that happens to be a portfolio.
+> A void-black control room. Electric neon lime (`#ccff00`) commands attention from the darkness — the only warm color in a frozen monochrome field. Text is monumental, uppercase, and unapologetic: every heading is stamped in Bebas Neue like a metal plate. The hero breathes with a Three.js particle field, scanline sweep, and a grid overlay that evokes a radar display. The moment a visitor scrolls, a CLI terminal types out identity commands one character at a time — `whoami`, `cat philosophy.md`, `status --available`. Five project cards sit in a grid with magnetic hover that makes the cards subtly follow the cursor; clicking any one opens a full-screen case study modal with its own Three.js canvas demo. The Skills section renders a live Chart.js radar chart that animates on scroll. The Process timeline slides in step by step like pistons. Three testimonials, three blog cards, a contact form with real validation. A neon-yellow ticker marquee scrolls infinitely. A custom blob cursor trails the mouse with `mix-blend-mode: difference`. Every section border is a 1.5px neon-tinted line. Zero border-radius. No soft drop shadows. No corporate blue. This is not a website — it's a control room that happens to be a portfolio.
 
 ---
 

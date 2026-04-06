@@ -1,87 +1,59 @@
-import { useState, lazy, Suspense } from 'react';
-import { Toaster } from 'sonner';
+import { useState, useCallback } from 'react';
 import { useActiveSection } from '@/hooks/useActiveSection';
-import { useCommandPalette } from '@/hooks/useCommandPalette';
-import { type Project } from '@/lib/data';
+import { type Project, PROJECTS } from '@/lib/data';
 
-// Shell components
-import BackgroundEffects from '@/components/BackgroundEffects';
+import Preloader from '@/components/Preloader';
+import CustomCursor from '@/components/CustomCursor';
 import ScrollProgress from '@/components/ScrollProgress';
+import BackToTop from '@/components/BackToTop';
 import Navigation from '@/components/Navigation';
-import SideNav from '@/components/SideNav';
-import CommandPalette from '@/components/CommandPalette';
-import Footer from '@/components/Footer';
-import LoadingScreen from '@/components/LoadingScreen';
-
-// Content sections
+import Hero from '@/components/Hero';
+import Ticker from '@/components/Ticker';
 import Identity from '@/components/Identity';
+import Work from '@/components/Work';
+import Services from '@/components/Services';
+import Skills from '@/components/Skills';
 import Process from '@/components/Process';
-import Proof from '@/components/Proof/Proof';
-import Trust from '@/components/Trust';
-import Thoughts from '@/components/Thoughts';
+import Testimonials from '@/components/Testimonials';
+import Blog from '@/components/Blog';
 import Contact from '@/components/Contact';
-import ProjectModal from '@/components/ProjectModal';
-
-// Lazy-loaded Hero (most complex, loaded last)
-const Hero = lazy(() => import('@/components/Hero'));
+import Footer from '@/components/Footer';
+import CaseStudyModal from '@/components/CaseStudyModal';
 
 export default function App() {
-  const { activeSection, scrollToSection } = useActiveSection();
-  const { isOpen: paletteOpen, setIsOpen: setPaletteOpen } = useCommandPalette();
+  const activeSection = useActiveSection();
   const [modalProject, setModalProject] = useState<Project | null>(null);
+
+  const scrollToSection = useCallback((id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
 
   return (
     <>
-      {/* Background effects layer */}
-      <BackgroundEffects />
-
-      {/* Scroll progress bar */}
+      <Preloader />
+      <CustomCursor />
       <ScrollProgress />
-
-      {/* Navigation system */}
       <Navigation activeSection={activeSection} scrollToSection={scrollToSection} />
-      <SideNav activeSection={activeSection} scrollToSection={scrollToSection} />
-      <CommandPalette
-        isOpen={paletteOpen}
-        setIsOpen={setPaletteOpen}
-        scrollToSection={scrollToSection}
-        activeSection={activeSection}
-      />
+      <BackToTop />
 
-      {/* Main content */}
       <main id="main">
-        {/* Hero — lazy loaded with loading screen */}
-        <Suspense fallback={<LoadingScreen />}>
-          <Hero />
-        </Suspense>
-
-        {/* Content sections */}
+        <Hero />
+        <Ticker />
         <Identity />
+        <Work onOpenModal={(i: number) => setModalProject(PROJECTS[i] ?? null)} />
+        <Services />
+        <Skills />
         <Process />
-        <Proof onOpenModal={setModalProject} />
-        <Trust />
-        <Thoughts />
+        <Testimonials />
+        <Blog />
         <Contact />
       </main>
 
-      {/* Footer */}
       <Footer />
-
-      {/* Case study modal */}
-      <ProjectModal project={modalProject} onClose={() => setModalProject(null)} />
-
-      {/* Toast notifications */}
-      <Toaster
-        position="bottom-right"
-        richColors
-        toastOptions={{
-          style: {
-            background: 'var(--brutal-surface)',
-            border: 'var(--border-thin)',
-            color: 'var(--brutal-border)',
-          },
-        }}
-      />
+      <CaseStudyModal project={modalProject} onClose={() => setModalProject(null)} />
     </>
   );
 }
