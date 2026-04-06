@@ -152,8 +152,16 @@ export default function Hero() {
     // Ambient glows
     tl.to('.hero-glow', { opacity: 1, duration: 1.5, stagger: 0.3 }, 0);
 
-    // Corners
-    tl.to('.corner', { opacity: 1, duration: 0.4, stagger: 0.1 }, 0.2);
+    // Corners — animate in from their respective corners using clipPath reveal
+    const cornerAnims: { el: string; from: object }[] = [
+      { el: '.corner.tl', from: { x: -40, y: -40, opacity: 0, clipPath: 'inset(0 100% 100% 0)' } },
+      { el: '.corner.tr', from: { x: 40, y: -40, opacity: 0, clipPath: 'inset(0 0 100% 100%)' } },
+      { el: '.corner.bl', from: { x: -40, y: 40, opacity: 0, clipPath: 'inset(100% 100% 0 0)' } },
+      { el: '.corner.br', from: { x: 40, y: 40, opacity: 0, clipPath: 'inset(100% 0 0 100%)' } },
+    ];
+    cornerAnims.forEach((anim, i) => {
+      tl.fromTo(anim.el, anim.from, { x: 0, y: 0, opacity: 1, clipPath: 'inset(0 0 0 0)', duration: 0.5, ease: 'power3.out' }, 0.2 + i * 0.1);
+    });
 
     // Side lines
     tl.to('.side-l, .side-r', { height: 120, duration: 0.8, stagger: 0.2 }, 0.4);
@@ -173,11 +181,14 @@ export default function Hero() {
       if (tantongco) scramble(tantongco, 'TANTONGCO', 1000);
     }, 1.0);
 
-    // Subtitle
-    tl.to('.hero-sub', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 1.6);
+    // Subtitle — slide up with opacity
+    tl.fromTo('.hero-sub', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 1.6);
 
-    // Tagline
-    tl.to('.hero-tagline', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 1.9);
+    // Tagline — slide up with opacity
+    tl.fromTo('.hero-tagline', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 1.9);
+
+    // Shadow block — slide offset from 2px to 4px
+    tl.fromTo('.shadow-block', { transform: 'translate(2px, 2px)' }, { transform: 'translate(4px, 4px)', duration: 0.4, ease: 'power2.out' }, 2.1);
 
     // Scroll indicator
     tl.to('.scroll-indicator', { opacity: 1, duration: 0.6 }, 2.2);
@@ -187,7 +198,7 @@ export default function Hero() {
     };
   }, [reduced]);
 
-  // Parallax on scroll
+  // Parallax on scroll with scale zoom-out
   useEffect(() => {
     if (reduced) return;
     const hero = document.querySelector('.hero-parallax');
@@ -198,7 +209,8 @@ export default function Hero() {
       const pct = y / window.innerHeight;
       const opacity = Math.max(0, 1 - pct * 1.5);
       const translateY = y * 0.3;
-      gsap.set(hero, { y: translateY, opacity });
+      const scale = 1 - pct * 0.1;
+      gsap.set(hero, { y: translateY, opacity, scale });
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });

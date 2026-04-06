@@ -7,8 +7,16 @@ export default function CustomCursor() {
   const target = useRef({ x: -100, y: -100 });
   const time = useRef(0);
   const raf = useRef(0);
+  const isTouch = useRef(false);
 
   useEffect(() => {
+    isTouch.current = 'ontouchstart' in window;
+    if (isTouch.current) {
+      if (blobRef.current) blobRef.current.style.display = 'none';
+      if (dotRef.current) dotRef.current.style.display = 'none';
+      return;
+    }
+
     const onMove = (e: MouseEvent) => {
       target.current = { x: e.clientX, y: e.clientY };
     };

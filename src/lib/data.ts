@@ -24,6 +24,8 @@ export interface Testimonial {
   quote: string;
   author: string;
   role: string;
+  rating: number;
+  avatar: string;
 }
 
 export interface BlogPost {
@@ -33,6 +35,7 @@ export interface BlogPost {
   excerpt: string;
   readTime: string;
   featured?: boolean;
+  url: string;
 }
 
 export interface SkillCategory {
@@ -240,16 +243,22 @@ export const TESTIMONIALS: Testimonial[] = [
     quote: "Mark doesn't just use AI tools — he engineers entire systems around them. Our creative output tripled, and the quality actually went up. His physics-first approach to prompting is genuinely different from anything I've seen.",
     author: 'Sofia Reyes',
     role: 'Creative Director, Lumina Studio',
+    rating: 5,
+    avatar: 'SR',
   },
   {
     quote: "We went from spending weeks on brand decisions to hours. The Brand Intelligence Engine gave us data-backed confidence that we never had before. It's not a tool — it's a paradigm shift.",
     author: 'James Alcantara',
     role: 'Founder, ContentLab PH',
+    rating: 5,
+    avatar: 'JA',
   },
   {
     quote: "The WebGPU experience Mark built for our product launch generated more engagement than our last three campaigns combined. People couldn't stop sharing it. That's the power of building something that feels alive.",
     author: 'Mia Fernandez',
     role: 'Head of Visual, Pulse Media',
+    rating: 5,
+    avatar: 'MF',
   },
 ];
 
@@ -261,6 +270,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: "Most people write prompts like wishlists. I write them like physics equations — defining constraints, forces, and desired states. Here's the framework that changed how I think about AI generation.",
     readTime: '8 min read',
     featured: true,
+    url: '#thoughts/physics-first-prompting',
   },
   {
     date: 'Feb 2026',
@@ -268,6 +278,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'Design Tokens as a Living Organism',
     excerpt: 'Design tokens aren\'t just variables in a JSON file. When you architect them as a living system, they start to inform decisions, enforce consistency, and evolve with your brand.',
     readTime: '5 min read',
+    url: '#thoughts/design-tokens-living-organism',
   },
   {
     date: 'Jan 2026',
@@ -275,6 +286,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'GEO is Not SEO: Get Cited by AI',
     excerpt: "AI assistants are the new search engines. If you're only optimizing for Google, you're invisible to the growing audience that asks ChatGPT, Perplexity, and Gemini first.",
     readTime: '6 min read',
+    url: '#thoughts/geo-not-seo',
   },
 ];
 

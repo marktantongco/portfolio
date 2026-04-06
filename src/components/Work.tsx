@@ -40,6 +40,7 @@ export default function Work({ onOpenModal }: Props) {
     gsap.to(card, {
       rotateX: -dy * 8,
       rotateY: dx * 8,
+      scale: 1.02,
       duration: 0.4,
       ease: 'power2.out',
       transformPerspective: 800,
@@ -50,6 +51,7 @@ export default function Work({ onOpenModal }: Props) {
     gsap.to(e.currentTarget, {
       rotateX: 0,
       rotateY: 0,
+      scale: 1,
       duration: 0.8,
       ease: 'elastic.out(1, 0.5)',
     });
@@ -69,6 +71,7 @@ export default function Work({ onOpenModal }: Props) {
             key={i}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
+            onClick={(e) => { e.stopPropagation(); onOpenModal(i); }}
           >
             <span className="proj-num">{p.num}</span>
             <h3 className="proj-title">{p.title}</h3>

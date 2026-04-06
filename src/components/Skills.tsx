@@ -7,9 +7,11 @@ import { SKILL_CATEGORIES, SKILL_RADAR_LABELS, SKILL_RADAR_BASE } from '@/lib/da
 export default function Skills() {
   const sectionRef = useRef<HTMLElement>(null);
   const radarRef = useRef<HTMLCanvasElement>(null);
+  const radarWrapRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<Chart | null>(null);
   const reduced = useReducedMotion();
   const [activeScores, setActiveScores] = useState<number[]>([...SKILL_RADAR_BASE]);
+  const [activePillIndex, setActivePillIndex] = useState<number | null>(null);
 
   // Radar chart
   useEffect(() => {
@@ -62,6 +64,7 @@ export default function Skills() {
 
   // Update radar on hover
   const handlePillHover = useCallback((catIndex: number) => {
+    setActivePillIndex(catIndex);
     const newScores = SKILL_RADAR_BASE.map((base, i) =>
       i === catIndex ? 100 : base * 0.7
     );
@@ -69,6 +72,7 @@ export default function Skills() {
   }, []);
 
   const handlePillLeave = useCallback(() => {
+    setActivePillIndex(null);
     setActiveScores([...SKILL_RADAR_BASE]);
   }, []);
 
@@ -83,6 +87,17 @@ export default function Skills() {
         scrollTrigger: { trigger: '.sk-heading', start: 'top 85%' },
         opacity: 0, y: 40, duration: 0.8, ease: 'power2.out',
       });
+
+      // Radar chart: animate from scale 0.5 with rotation when entering viewport
+      if (radarWrapRef.current) {
+        gsap.fromTo(radarWrapRef.current,
+          { scale: 0.5, rotation: -90, opacity: 0 },
+          {
+            scale: 1, rotation: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.4)',
+            scrollTrigger: { trigger: radarWrapRef.current, start: 'top 85%' },
+          }
+        );
+      }
 
       gsap.from('.sk-pill', {
         scrollTrigger: { trigger: '.sk-pills-grid', start: 'top 85%' },
@@ -113,7 +128,7 @@ export default function Skills() {
 
       <div className="sk-right">
         <div className="sk-radar-header">
-          <div className="radar-wrap" style={{ minHeight: 200 }}>
+          <div className="radar-wrap" ref={radarWrapRef} style={{ minHeight: 200 }}>
             <canvas ref={radarRef} />
           </div>
         </div>
@@ -125,7 +140,7 @@ export default function Skills() {
               <div className="sk-list">
                 {cat.skills.map((sk, j) => (
                   <span
-                    className="sk-pill"
+                    className={`sk-pill${activePillIndex === cat.index ? ' active' : ''}`}
                     key={j}
                     onMouseEnter={() => handlePillHover(cat.index)}
                     onMouseLeave={handlePillLeave}

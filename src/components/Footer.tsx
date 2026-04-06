@@ -1,9 +1,27 @@
+import { useEffect, useRef } from 'react';
+import { gsap, ScrollTrigger } from '@/lib/gsap-setup';
 import { NAV_LINKS, SOCIAL_LINKS } from '@/lib/data';
 
 export default function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!footerRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(footerRef.current,
+        { y: 60, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.8, ease: 'power2.out',
+          scrollTrigger: { trigger: footerRef.current, start: 'top 95%' },
+        }
+      );
+    }, footerRef.current);
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
-      <footer>
+      <footer ref={footerRef}>
         <div className="footer-brand">
           <span className="footer-logo">MAT</span>
           <p className="footer-tagline">
@@ -35,6 +53,10 @@ export default function Footer() {
       </footer>
 
       <div className="footer-bottom">
+        <span className="footer-status">
+          <span className="footer-status-dot" />
+          System Online
+        </span>
         <span>© {new Date().getFullYear()} Mark Anthony Tantongco</span>
         <span>Built with React, Three.js, GSAP & Chart.js</span>
       </div>

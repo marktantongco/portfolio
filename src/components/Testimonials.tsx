@@ -3,6 +3,16 @@ import { gsap, ScrollTrigger } from '@/lib/gsap-setup';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { TESTIMONIALS } from '@/lib/data';
 
+function StarRating({ rating }: { rating: number }) {
+  return (
+    <div className="test-stars">
+      {Array.from({ length: 5 }, (_, i) => (
+        <span key={i} className={i < rating ? 'star-filled' : 'star-empty'}>★</span>
+      ))}
+    </div>
+  );
+}
+
 export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
@@ -35,9 +45,15 @@ export default function Testimonials() {
       <div className="test-grid">
         {TESTIMONIALS.map((t, i) => (
           <div className="test-card" key={i}>
+            <StarRating rating={t.rating} />
             <div className="test-quote">{t.quote}</div>
-            <div className="test-author">{t.author}</div>
-            <div className="test-role">{t.role}</div>
+            <div className="test-author-row">
+              <div className="test-avatar">{t.avatar}</div>
+              <div>
+                <div className="test-author">{t.author}</div>
+                <div className="test-role">{t.role}</div>
+              </div>
+            </div>
           </div>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NAV_LINKS, SOCIAL_LINKS } from '@/lib/data';
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 export default function Navigation({ activeSection, scrollToSection }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('theme') as 'dark' | 'light' | null;
@@ -17,6 +18,33 @@ export default function Navigation({ activeSection, scrollToSection }: Props) {
       document.documentElement.setAttribute('data-theme', saved);
     }
   }, []);
+
+  // Auto-hide on scroll down / show on scroll up
+  useEffect(() => {
+    let lastScroll = 0;
+    const onScroll = () => {
+      const current = window.scrollY;
+      if (current > lastScroll && current > 100) {
+        // scrolling down
+        navRef.current?.classList.add('nav-hidden');
+      } else {
+        navRef.current?.classList.remove('nav-hidden');
+      }
+      lastScroll = current;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Mobile drawer: lock body scroll when open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
@@ -27,12 +55,13 @@ export default function Navigation({ activeSection, scrollToSection }: Props) {
 
   const handleLinkClick = (id: string) => {
     setMobileOpen(false);
+    document.body.style.overflow = '';
     scrollToSection(id);
   };
 
   return (
     <>
-      <nav>
+      <nav ref={navRef}>
         <a className="nav-logo" href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('identity'); }}>
           MAT
         </a>

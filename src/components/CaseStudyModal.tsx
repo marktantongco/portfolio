@@ -10,8 +10,10 @@ interface Props {
 
 export default function CaseStudyModal({ project, onClose }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const demoCanvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<{ cleanup: (() => void) | null }>({ cleanup: null });
+  const entranceTlRef = useRef<gsap.core.Timeline | null>(null);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -31,6 +33,69 @@ export default function CaseStudyModal({ project, onClose }: Props) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [project, onClose]);
+
+  // GSAP entrance animation when project changes
+  useEffect(() => {
+    if (!project) {
+      entranceTlRef.current?.kill();
+      entranceTlRef.current = null;
+      return;
+    }
+
+    // Kill any previous entrance timeline
+    entranceTlRef.current?.kill();
+
+    const tl = gsap.timeline();
+    entranceTlRef.current = tl;
+
+    // Overlay fade in
+    tl.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0);
+
+    // Modal slide up with scale
+    tl.fromTo(modalRef.current,
+      { y: 40, opacity: 0, scale: 0.96 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: 'expo.out' },
+      0.1
+    );
+
+    // Stagger metrics
+    tl.fromTo('.cs-metric',
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.4, stagger: 0.1, ease: 'power3.out' },
+      0.4
+    );
+
+    // Stagger steps
+    tl.fromTo('.cs-step',
+      { x: -20, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.4, stagger: 0.1, ease: 'power3.out' },
+      0.55
+    );
+
+    // Stagger results
+    tl.fromTo('.cs-result-item',
+      { y: 15, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.4, stagger: 0.08, ease: 'power3.out' },
+      0.7
+    );
+
+    return () => {
+      tl.kill();
+    };
+  }, [project]);
+
+  // GSAP exit animation handler
+  const handleClose = useCallback(() => {
+    const tl = gsap.timeline({
+      onComplete: onClose,
+    });
+
+    tl.to('.cs-result-item', { y: 15, opacity: 0, duration: 0.25, stagger: 0.05, ease: 'power3.in' }, 0);
+    tl.to('.cs-step', { x: -20, opacity: 0, duration: 0.25, stagger: 0.05, ease: 'power3.in' }, 0.05);
+    tl.to('.cs-metric', { y: 20, opacity: 0, duration: 0.25, stagger: 0.05, ease: 'power3.in' }, 0.1);
+    tl.to(modalRef.current, { y: 40, opacity: 0, scale: 0.96, duration: 0.35, ease: 'expo.in' }, 0.2);
+    tl.to(overlayRef.current, { opacity: 0, duration: 0.25, ease: 'power2.in' }, 0.35);
+  }, [onClose]);
 
   // Demo engine
   useEffect(() => {
@@ -225,6 +290,15 @@ export default function CaseStudyModal({ project, onClose }: Props) {
     };
   }, [project]);
 
+  // Cleanup Three.js/canvas on unmount
+  useEffect(() => {
+    return () => {
+      animRef.current.cleanup?.();
+      animRef.current.cleanup = null;
+      entranceTlRef.current?.kill();
+    };
+  }, []);
+
   // Resize canvas on window resize
   useEffect(() => {
     const onResize = () => {
@@ -241,15 +315,15 @@ export default function CaseStudyModal({ project, onClose }: Props) {
   if (!project) return null;
 
   return (
-    <div id="cs-overlay" className="open" ref={overlayRef} onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}>
-      <div className="cs-modal">
+    <div id="cs-overlay" className="open" ref={overlayRef} onClick={(e) => { if (e.target === overlayRef.current) handleClose(); }}>
+      <div className="cs-modal" ref={modalRef}>
         <div className="cs-hdr">
           <div>
             <span className="cs-num">{project.num} — Case Study</span>
             <h2 className="cs-title">{project.title}</h2>
             <p className="cs-tagline">{project.desc}</p>
           </div>
-          <button className="cs-close" onClick={onClose}>✕ Close</button>
+          <button className="cs-close" onClick={handleClose}>✕ Close</button>
         </div>
 
         <div className="cs-body">
@@ -318,10 +392,10 @@ export default function CaseStudyModal({ project, onClose }: Props) {
 
           {/* CTA */}
           <div className="cs-cta-row">
-            <a className="cs-cta-primary" href={`#contact`} onClick={onClose}>
+            <a className="cs-cta-primary" href={`#contact`} onClick={handleClose}>
               Start a Similar Project →
             </a>
-            <button className="cs-cta-ghost" onClick={onClose}>
+            <button className="cs-cta-ghost" onClick={handleClose}>
               ← Back to All Projects
             </button>
           </div>

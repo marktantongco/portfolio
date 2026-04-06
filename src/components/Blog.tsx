@@ -46,7 +46,8 @@ export default function Blog() {
 
       <div className="blog-dual">
         {featured && (
-          <a className="blog-featured" href="#">
+          <a className="blog-featured" href={featured.url}>
+            <span className="blog-featured-num">01</span>
             <span className="blog-date">{featured.date}</span>
             <span className="blog-cat">{featured.category}</span>
             <h3 className="blog-title-lg">{featured.title}</h3>
@@ -60,7 +61,7 @@ export default function Blog() {
 
         <div className="blog-stack">
           {small.map((post, i) => (
-            <a className="blog-card-sm" href="#" key={i}>
+            <a className="blog-card-sm" href={post.url} key={i}>
               <span className="blog-date">{post.date}</span>
               <span className="blog-cat">{post.category}</span>
               <h3 className="blog-title-sm">{post.title}</h3>

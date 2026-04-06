@@ -7,10 +7,12 @@ export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
+  const checkRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
   const [form, setForm] = useState({ name: '', email: '', service: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -66,27 +68,42 @@ export default function Contact() {
     e.preventDefault();
     if (!validate()) return;
 
-    // Construct mailto link
-    const subject = encodeURIComponent(`Project Inquiry: ${form.service || 'General'}`);
-    const body = encodeURIComponent(
-      `Name: ${form.name}\nEmail: ${form.email}\nService: ${form.service}\n\n${form.message}`
-    );
-    window.location.href = `mailto:hello@markanthony.dev?subject=${subject}&body=${body}`;
+    setSubmitting(true);
 
-    // Show success
-    setSubmitted(true);
-    if (successRef.current) {
-      successRef.current.style.display = 'block';
-      gsap.from(successRef.current, {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        ease: 'power2.out',
-      });
-    }
-    if (formRef.current) {
-      gsap.to(formRef.current, { opacity: 0.3, duration: 0.3 });
-    }
+    // Simulate brief delay for UX
+    setTimeout(() => {
+      // Construct mailto link
+      const subject = encodeURIComponent(`Project Inquiry: ${form.service || 'General'}`);
+      const body = encodeURIComponent(
+        `Name: ${form.name}\nEmail: ${form.email}\nService: ${form.service}\n\n${form.message}`
+      );
+      window.location.href = `mailto:hello@markanthony.dev?subject=${subject}&body=${body}`;
+
+      // Show success
+      setSubmitting(false);
+      setSubmitted(true);
+      if (successRef.current) {
+        successRef.current.style.display = 'block';
+        gsap.from(successRef.current, {
+          opacity: 0,
+          y: 20,
+          duration: 0.6,
+          ease: 'power2.out',
+        });
+      }
+
+      // Checkmark animation
+      if (checkRef.current) {
+        gsap.fromTo(checkRef.current,
+          { scale: 0, rotation: -180 },
+          { scale: 1, rotation: 0, duration: 0.6, ease: 'back.out(2)', delay: 0.2 }
+        );
+      }
+
+      if (formRef.current) {
+        gsap.to(formRef.current, { opacity: 0.3, duration: 0.3 });
+      }
+    }, 600);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -128,6 +145,9 @@ export default function Contact() {
                 placeholder="Your name"
                 value={form.name}
                 onChange={handleChange}
+                required
+                aria-required="true"
+                aria-invalid={errors.name ? 'true' : 'false'}
               />
             </div>
             <div className="form-group">
@@ -140,6 +160,9 @@ export default function Contact() {
                 placeholder="your@email.com"
                 value={form.email}
                 onChange={handleChange}
+                required
+                aria-required="true"
+                aria-invalid={errors.email ? 'true' : 'false'}
               />
             </div>
           </div>
@@ -169,15 +192,20 @@ export default function Contact() {
               placeholder="Tell me about your project..."
               value={form.message}
               onChange={handleChange}
+              required
+              aria-required="true"
+              aria-invalid={errors.message ? 'true' : 'false'}
             />
           </div>
 
-          <button className="form-submit" type="submit">Send Message</button>
+          <button className="form-submit" type="submit" disabled={submitting}>
+            {submitting ? 'SENDING...' : 'Send Message'}
+          </button>
           <p className="form-note">* Required fields. Opens your email client.</p>
         </form>
 
         <div className="form-success" ref={successRef}>
-          <div className="form-success-icon">✓</div>
+          <div className="form-success-icon" ref={checkRef}>✓</div>
           <div className="form-success-title">Message Ready</div>
           <div className="form-success-sub">
             Your email client should have opened. If not, send your inquiry to hello@markanthony.dev
